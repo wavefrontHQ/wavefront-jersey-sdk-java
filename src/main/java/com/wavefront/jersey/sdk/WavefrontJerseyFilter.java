@@ -24,7 +24,7 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 
 /**
- * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses
+ * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
  *
  * @author Sushant Dewan (sushant@wavefront.com).
  */
@@ -60,8 +60,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalMethodName = pair._2;
 
        /* Gauges
-       * 1) <prefix>.request.api.v2.alert.summary.GET.inflight
-       * 2) <prefix>.requests.inflight
+       * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
+       * 2) jersey.server.total_requests.inflight
        */
        getGaugeValue(new MetricName(requestMetricKey + ".inflight",
           getCompleteTagsMap(finalClassName, finalMethodName))).incrementAndGet();
@@ -98,8 +98,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String responseMetricKey = optional.get();
 
       /* Gauges
-       * 1) <prefix>.request.api.v2.alert.summary.GET.inflight
-       * 2) <prefix>.requests.inflight
+       * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
+       * 2) jersey.server.total_requests.inflight
        */
       Map<String, String> completeTagsMap = getCompleteTagsMap(finalClassName, finalMethodName);
 
@@ -173,11 +173,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
       /*
        * Granular response metrics
-       * 1) <prefix>.response.api.v2.alert.summary.GET.200.cumulative (Regular Counter)
-       * 2) <prefix>.response.api.v2.alert.summary.GET.200.aggregated_per_shard (Delta Counter)
-       * 3) <prefix>.response.api.v2.alert.summary.GET.200.aggregated_per_service (Delta Counter)
-       * 4) <prefix>.response.api.v2.alert.summary.GET.200.aggregated_per_cluster (Delta Counter)
-       * 5) <prefix>.response.api.v2.alert.summary.GET.200.aggregated_per_application (Delta)
+       * 1) jersey.server.response.api.v2.alert.summary.GET.200.cumulative.count (Counter)
+       * 2) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_shard.count (Delta Counter)
+       * 3) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_service.count (Delta Counter)
+       * 4) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_cluster.count (Delta Counter)
+       * 5) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_application.count (Delta Counter)
        */
       wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey +
           ".cumulative", completeTagsMap));
@@ -192,15 +192,18 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
      /*
        * Overall error response metrics
-       * 1) <prefix>.response.errors.aggregated_per_shard (Delta Counter)
-       * 2) <prefix>.response.errors.aggregated_per_service (Delta Counter)
-       * 3) <prefix>.response.errors.aggregated_per_cluster (Delta Counter)
-       * 4) <prefix>.response.errors.aggregated_per_application (Delta Counter)
+       * 1) <prefix>.response.errors.aggregated_per_source (Counter)
+       * 2) <prefix>.response.errors.aggregated_per_shard (Delta Counter)
+       * 3) <prefix>.response.errors.aggregated_per_service (Delta Counter)
+       * 4) <prefix>.response.errors.aggregated_per_cluster (Delta Counter)
+       * 5) <prefix>.response.errors.aggregated_per_application (Delta Counter)
        */
       int statusCode = containerResponseContext.getStatus();
       if (statusCode >= 400 && statusCode <= 599) {
         wfJerseyReporter.incrementCounter(new MetricName("response.errors",
             completeTagsMap));
+        wfJerseyReporter.incrementCounter(new MetricName(
+            "response.errors.aggregated_per_source", overallAggregatedPerSourceMap));
         wfJerseyReporter.incrementDeltaCounter(new MetricName(
             "response.errors.aggregated_per_shard", overallAggregatedPerShardMap));
         wfJerseyReporter.incrementDeltaCounter(new MetricName(
@@ -213,23 +216,28 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
       /*
        * Overall response metrics
-       * 1) <prefix>.response.aggregated_per_source (Delta Counter)
-       * 2) <prefix>.response.aggregated_per_shard (Delta Counter)
-       * 3) <prefix>.response.aggregated_per_service (Delta Counter)
-       * 3) <prefix>.response.aggregated_per_cluster (Delta Counter)
-       * 5) <prefix>.response.aggregated_per_application (Delta Counter)
+       * 1) jersey.server.response.completed.aggregated_per_source.count (Counter)
+       * 2) jersey.server.response.completed.aggregated_per_shard.count (Delta Counter)
+       * 3) jersey.server.response.completed.aggregated_per_service.count (Delta Counter)
+       * 3) jersey.server.response.completed.aggregated_per_cluster.count (Delta Counter)
+       * 5) jersey.server.response.completed.aggregated_per_application.count (Delta Counter)
        */
-      wfJerseyReporter.incrementDeltaCounter(new MetricName("response.aggregated_per_source",
+      wfJerseyReporter.incrementCounter(new MetricName("response.completed.aggregated_per_source",
           overallAggregatedPerSourceMap));
-      wfJerseyReporter.incrementDeltaCounter(new MetricName("response.aggregated_per_shard",
-          overallAggregatedPerShardMap));
-      wfJerseyReporter.incrementDeltaCounter(new MetricName("response.aggregated_per_service",
-          overallAggregatedPerServiceMap));
-      wfJerseyReporter.incrementDeltaCounter(new MetricName("response.aggregated_per_cluster",
-          overallAggregatedPerClusterMap));
-      wfJerseyReporter.incrementDeltaCounter(new MetricName("response.aggregated_per_application",
-          overallAggregatedPerApplicationMap));
+      wfJerseyReporter.incrementDeltaCounter(new MetricName("response" +
+          ".completed.aggregated_per_shard", overallAggregatedPerShardMap));
+      wfJerseyReporter.incrementDeltaCounter(new MetricName("response" +
+          ".completed.aggregated_per_service", overallAggregatedPerServiceMap));
+      wfJerseyReporter.incrementDeltaCounter(new MetricName("response" +
+          ".completed.aggregated_per_cluster", overallAggregatedPerClusterMap));
+      wfJerseyReporter.incrementDeltaCounter(new MetricName("response" +
+          ".completed.aggregated_per_application", overallAggregatedPerApplicationMap));
 
+      /*
+       * WavefrontHistograms
+       * 1) jersey.server.response.api.v2.alert.summary.GET.200.latency
+       * 2) jersey.server.response.api.v2.alert.summary.GET.200.cpu_ns
+       */
       long cpuNanos = ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime() -
           startTimeCpuNanos.get();
       wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".cpu_ns",
@@ -238,12 +246,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       long apiLatency = System.currentTimeMillis() - startTime.get();
       wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".latency",
               completeTagsMap), apiLatency);
-
-      /*
-       * TODO - WavefrontHistogram
-       * <prefix>.response.api.v2.alert.summary.GET.200.request_size
-       * <prefix>.response.api.v2.alert.summary.GET.200.response_size
-       */
     }
   }
 

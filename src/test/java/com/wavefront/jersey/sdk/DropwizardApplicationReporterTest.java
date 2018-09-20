@@ -428,7 +428,7 @@ public class DropwizardApplicationReporterTest {
   }
 
   private void testOverallAggregatedMetrics() {
-    // dropwizard.api.request.inflight gauge should be 0
+    // jersey.server.total_requests.inflight gauge should be 0
     assertEquals(0, sampleApp.reportedValue(new MetricName(
         "request.inflight", new HashMap<String, String>() {{
           put("cluster", CLUSTER);
@@ -437,7 +437,7 @@ public class DropwizardApplicationReporterTest {
     }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
-        "response.aggregated_per_source",
+        "response.completed.aggregated_per_source",
         new HashMap<String, String>() {{
           put("cluster", CLUSTER);
           put("service", SERVICE);
@@ -445,7 +445,7 @@ public class DropwizardApplicationReporterTest {
     }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
-        "response.aggregated_per_shard",
+        "response.completed.aggregated_per_shard",
         new HashMap<String, String>() {{
           put("cluster", CLUSTER);
           put("service", SERVICE);
@@ -454,7 +454,7 @@ public class DropwizardApplicationReporterTest {
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
-        "response.aggregated_per_service",
+        "response.completed.aggregated_per_service",
         new HashMap<String, String>() {{
           put("cluster", CLUSTER);
           put("service", SERVICE);
@@ -462,14 +462,14 @@ public class DropwizardApplicationReporterTest {
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
-        "response.aggregated_per_cluster",
+        "response.completed.aggregated_per_cluster",
         new HashMap<String, String>() {{
           put("cluster", CLUSTER);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
-        "response.aggregated_per_application",
+        "response.completed.aggregated_per_application",
         new HashMap<String, String>() {{
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));

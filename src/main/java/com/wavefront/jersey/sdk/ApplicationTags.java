@@ -3,6 +3,8 @@ package com.wavefront.jersey.sdk;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 /**
  * Metadata about your application represented as tags in Wavefront.
  *
@@ -10,8 +12,10 @@ import java.util.Map;
  */
 public class ApplicationTags {
   private final String application;
+  @Nullable
   private final String cluster;
   private final String service;
+  @Nullable
   private final String shard;
   private final Map<String, String> customTags;
 
@@ -21,15 +25,17 @@ public class ApplicationTags {
     private final String service;
 
     // Optional parameters
-    private String cluster = "defaultCluster";
-    private String shard = "defaultShard";
+    @Nullable
+    private String cluster;
+    @Nullable
+    private String shard;
     private Map<String, String> customTags = new HashMap<>();
 
     /**
-     * Builder to build ApplicationTags
+     * Builder to build ApplicationTags.
      *
-     * @param application Name of the application
-     * @param service     Name of the service
+     * @param application Name of the application.
+     * @param service     Name of the service.
      */
     public Builder(String application, String service) {
       this.application = application;
@@ -37,11 +43,11 @@ public class ApplicationTags {
     }
 
     /**
-     * Set the cluster in which your application is running.
+     * Set the cluster (example: us-west-1/us-west-2 etc.) in which your application is running.
      * This setting is optional.
      *
-     * @param cluster cluster in which your application is running
-     * @return {@code this}
+     * @param cluster cluster in which your application is running.
+     * @return {@code this}.
      */
     public Builder cluster(String cluster) {
       this.cluster = cluster;
@@ -49,11 +55,11 @@ public class ApplicationTags {
     }
 
     /**
-     * Set the shard (example: primary/seconday etc.) in which your application is running.
+     * Set the shard (example: primary/secondary etc.) in which your application is running.
      * This setting is optional.
      *
-     * @param shard primary/secondary shard where your application is running
-     * @return {@code this}
+     * @param shard shard where your application is running.
+     * @return {@code this}.
      */
     public Builder shard(String shard) {
       this.shard = shard;
@@ -73,6 +79,11 @@ public class ApplicationTags {
       return this;
     }
 
+    /**
+     * Build application tags.
+     *
+     * @return {@link ApplicationTags}.
+     */
     public ApplicationTags build() {
       return new ApplicationTags(this);
     }
@@ -87,18 +98,18 @@ public class ApplicationTags {
   }
 
   /**
-   * Fetch the application name
+   * Fetch the application name.
    *
-   * @return name of the application
+   * @return name of the application.
    */
   public String getApplication() {
     return application;
   }
 
   /**
-   * Fetch the cluster name
+   * Fetch the cluster name.
    *
-   * @return name of the cluster
+   * @return name of the cluster.
    */
   String getCluster() {
     return cluster;
@@ -114,18 +125,18 @@ public class ApplicationTags {
   }
 
   /**
-   * Fetch the shard name
+   * Fetch the shard name.
    *
-   * @return name of the shard
+   * @return name of the shard.
    */
   String getShard() {
     return shard;
   }
 
   /**
-   * Fetch the custom tags
+   * Fetch the custom tags.
    *
-   * @return custom tags
+   * @return custom tags.
    */
   public Map<String, String> getCustomTags() {
     return customTags;

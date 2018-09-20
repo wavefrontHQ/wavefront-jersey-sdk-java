@@ -21,8 +21,8 @@ abstract class MetricNameUtils {
   /**
    * Util to generate metric name from the jersey container request.
    *
-   * @param request jersey container request
-   * @return generated metric name from the jersey container request
+   * @param request jersey container request.
+   * @return generated metric name from the jersey container request.
    */
   static Optional<String> metricName(ContainerRequest request) {
     return metricName(request, REQUEST_PREFIX);
@@ -31,9 +31,9 @@ abstract class MetricNameUtils {
   /**
    * Util to generate metric name from the jersey container response.
    *
-   * @param request  jersey container request
-   * @param response jersey container response
-   * @return generated metric name from the jersey container request/response
+   * @param request  jersey container request.
+   * @param response jersey container response.
+   * @return generated metric name from the jersey container request/response.
    */
   static Optional<String> metricName(ContainerRequest request,
                                             ContainerResponseContext response) {
@@ -61,11 +61,11 @@ abstract class MetricNameUtils {
   /**
    * Accepts a resource method and extracts the path and turns slashes into dots to be more metric
    * friendly. Might return empty metric name if all the original characters in the string are not
-   * metric friendly
+   * metric friendly.
    *
-   * @param httpMethod Jersey API HTTP request method
-   * @param path       Jersey API request relative path
-   * @return generated metric name from the original request
+   * @param httpMethod Jersey API HTTP request method.
+   * @param path       Jersey API request relative path.
+   * @return generated metric name from the original request.
    */
   private static Optional<String> metricName(String httpMethod, String path) {
     String metricId = stripLeadingAndTrailingSlashes(path);

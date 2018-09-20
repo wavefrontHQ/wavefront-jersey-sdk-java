@@ -5,7 +5,7 @@ import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * An interface to report metrics and histograms for your Jersey based application
+ * An interface to report metrics and histograms for your Jersey based application.
  *
  * @author Sushant Dewan (sushant@wavefront.com).
  */

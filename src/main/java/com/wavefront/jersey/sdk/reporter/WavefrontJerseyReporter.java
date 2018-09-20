@@ -51,7 +51,7 @@ public class WavefrontJerseyReporter implements JerseyReporter {
   public static class Builder {
     // Required parameters
     private final ApplicationTags applicationTags;
-    private final String prefix;
+    private final String prefix = "jersey.server";
 
     // Optional parameters
     private int reportingIntervalSeconds = 60;
@@ -62,23 +62,19 @@ public class WavefrontJerseyReporter implements JerseyReporter {
     /**
      * Builder to build WavefrontJerseyReporter.
      *
-     * @param prefix           prefix that is applied to all your applications.
-     *                         For instance, if you are plugging this SDK in your dropwizard app,
-     *                         then you can go with "dropwizard.api.*" prefix.
      * @param applicationTags  metadata about your application that you want to be propagated as
      *                         tags when metrics/histograms are sent to Wavefront.
      */
-    public Builder(String prefix, ApplicationTags applicationTags) {
-      this.prefix = prefix;
+    public Builder(ApplicationTags applicationTags) {
       this.applicationTags = applicationTags;
     }
 
     /**
-     * Set reporting interval i.e. how often do you want to report the metrics/histograms to
-     * Wavefront?
+     * Set reporting interval i.e. how often you want to report the metrics/histograms to
+     * Wavefront.
      *
      * @param reportingIntervalSeconds reporting interval in seconds.
-     * @return {@code this}
+     * @return {@code this}.
      */
     public Builder reportingIntervalSeconds(int reportingIntervalSeconds) {
       this.reportingIntervalSeconds = reportingIntervalSeconds;
@@ -86,10 +82,10 @@ public class WavefrontJerseyReporter implements JerseyReporter {
     }
 
     /**
-     * Set the source tag for your metric and histograms
+     * Set the source tag for your metric and histograms.
      *
      * @param source Name of the source/host where your application is running.
-     * @return {@code this}
+     * @return {@code this}.
      */
     public Builder source(String source) {
       this.source = source;
@@ -97,10 +93,10 @@ public class WavefrontJerseyReporter implements JerseyReporter {
     }
 
     /**
-     * Build WavefrontJerseyReporter
+     * Build WavefrontJerseyReporter.
      *
-     * @param wavefrontSender send data to Wavefront via proxy or direct ingestion
-     * @return An instance of {@link WavefrontJerseyReporter}
+     * @param wavefrontSender send data to Wavefront via proxy or direct ingestion.
+     * @return An instance of {@link WavefrontJerseyReporter}.
      */
     public WavefrontJerseyReporter build(WavefrontSender wavefrontSender) {
       if (source == null) {
