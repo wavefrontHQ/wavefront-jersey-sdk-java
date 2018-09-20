@@ -122,7 +122,7 @@ When this API is invoked following entities (i.e. metrics and histograms) are re
 |jersey.server.response.inventory.orders.fulfilled.GET.200.cpu_ns|WavefrontHistogram|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 
 ### Overall Response related metrics
-This includes all the completed requests that returned a response (i.e. success + errors).
+This includes all the completed requests that returned a response (i.e. success + errors).<br/>
 |Entity Name| Entity Type|source|application|cluster|service|shard|
 | ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|
 |jersey.server.response.completed.aggregated_per_source.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|
@@ -132,7 +132,7 @@ This includes all the completed requests that returned a response (i.e. success 
 |jersey.server.response.completed.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
 
 ### Overall Error Response related metrics
-This includes all the completed requests that resulted in an error response (that is HTTP status code of 4xx or 5xx).
+This includes all the completed requests that resulted in an error response (that is HTTP status code of 4xx or 5xx).<br/>
 |Entity Name| Entity Type|source|application|cluster|service|shard|
 | ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|
 |jersey.server.response.errors.aggregated_per_source.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|

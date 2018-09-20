@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="58c7b61b-c4f0-4bde-b5b8-ee277a74ac99" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/MetricNameUtils.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/MetricNameUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/JerseyReporter.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/JerseyReporter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/wavefront/jersey/sdk/DropwizardApplicationReporterTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/wavefront/jersey/sdk/DropwizardApplicationReporterTest.java" />
-    </list>
+    <list default="true" id="58c7b61b-c4f0-4bde-b5b8-ee277a74ac99" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,8 +25,8 @@
       <file leaf-file-name="WavefrontJerseyFilter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="616">
-              <caret line="215" column="0" lean-forward="true" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
+            <state relative-caret-position="331">
+              <caret line="196" column="75" lean-forward="true" selection-start-line="196" selection-start-column="75" selection-end-line="196" selection-end-column="75" />
               <folding />
             </state>
           </provider>
@@ -401,7 +392,7 @@
       <workItem from="1535582250201" duration="10734000" />
       <workItem from="1535598076251" duration="20326000" />
       <workItem from="1536601619878" duration="6408000" />
-      <workItem from="1537232750716" duration="11145000" />
+      <workItem from="1537232750716" duration="11189000" />
     </task>
     <servers />
   </component>
@@ -438,7 +429,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52751000" />
+    <option name="totallyTimeSpent" value="52795000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
@@ -870,8 +861,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="215" column="0" lean-forward="true" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
+        <state relative-caret-position="331">
+          <caret line="196" column="75" lean-forward="true" selection-start-line="196" selection-start-column="75" selection-end-line="196" selection-end-column="75" />
           <folding />
         </state>
       </provider>
