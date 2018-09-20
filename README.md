@@ -64,6 +64,16 @@ to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 
 ### WavefrontJerseyReporter
 ```java
+
+    /* Create WavefrontJerseyReporter.Builder using applicationTags.
+    WavefrontJerseyReporter.Builder builder = new WavefrontJerseyReporter.Builder(applicationTags);
+
+    /* Set the source for your metrics and histograms */
+    builder.withSource("mySource");
+
+    /* Optionally change the reporting frequency to 30 seconds, defaults to 1 min */
+    builder.reportingIntervalSeconds(30);
+
     /* Create a WavefrontJerseyReporter using ApplicationTags metadata and WavefronSender */
     WavefrontJerseyReporter wfJerseyReporter = new WavefrontJerseyReporter.
         Builder(applicationTags).build(wavefrontSender);

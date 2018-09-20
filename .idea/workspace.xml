@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="58c7b61b-c4f0-4bde-b5b8-ee277a74ac99" name="Default" comment="" />
+    <list default="true" id="58c7b61b-c4f0-4bde-b5b8-ee277a74ac99" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java" afterPath="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java" />
+    </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -12,22 +17,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="String.java" pinned="false" current-in-tab="false">
-        <entry file="jar:///Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/lib/src.zip!/java.base/java/lang/String.java">
+      <file leaf-file-name="WavefrontJerseyFilter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="136" column="11" lean-forward="true" selection-start-line="136" selection-start-column="11" selection-end-line="136" selection-end-column="11" />
+            <state relative-caret-position="-597">
+              <caret line="224" column="51" lean-forward="true" selection-start-line="224" selection-start-column="51" selection-end-line="224" selection-end-column="51" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WavefrontJerseyFilter.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java">
+      <file leaf-file-name="ApplicationTags.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
-              <caret line="196" column="75" lean-forward="true" selection-start-line="196" selection-start-column="75" selection-end-line="196" selection-end-column="75" />
-              <folding />
+            <state relative-caret-position="405">
+              <caret line="112" column="5" lean-forward="true" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+              <folding>
+                <element signature="e#2829#2830#0" expanded="true" />
+                <element signature="e#2853#2854#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -42,12 +50,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WavefrontJerseyReporter.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="WavefrontJerseyReporter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="92" column="5" lean-forward="true" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
-              <folding />
+            <state relative-caret-position="318">
+              <caret line="89" column="29" lean-forward="false" selection-start-line="89" selection-start-column="19" selection-end-line="89" selection-end-column="29" />
+              <folding>
+                <element signature="e#2103#2104#0" expanded="true" />
+                <element signature="e#2155#2156#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -73,12 +84,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>new WavefrontJerseyReporter</find>
-      <find>newWavefrontHistogram</find>
-      <find>new ApplicationTags</find>
-      <find>getGaugeValue</find>
-      <find>finalClassName =</find>
-      <find>finalclassna</find>
       <find>aggregatedPerShardMap</find>
       <find>@nullable</find>
       <find>customTags</find>
@@ -103,6 +108,12 @@
       <find>lert.summary.GET.200.cpu_ns</find>
       <find>jersey.server.response.completed.aggregated_per_cluster.count</find>
       <find>errors.</find>
+      <find>errors</find>
+      <find>.getshard(</find>
+      <find>.getcluster(</find>
+      <find>.getcluster</find>
+      <find>gauges.get</find>
+      <find>delta counter</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -124,14 +135,14 @@
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/JerseyReporter.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/wavefront/jersey/sdk/app/SampleApp.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/MetricNameUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/JerseyReporter.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/wavefront/jersey/sdk/DropwizardApplicationReporterTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java" />
       </list>
     </option>
   </component>
@@ -392,7 +403,7 @@
       <workItem from="1535582250201" duration="10734000" />
       <workItem from="1535598076251" duration="20326000" />
       <workItem from="1536601619878" duration="6408000" />
-      <workItem from="1537232750716" duration="11189000" />
+      <workItem from="1537232750716" duration="13851000" />
     </task>
     <servers />
   </component>
@@ -429,7 +440,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52795000" />
+    <option name="totallyTimeSpent" value="55457000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
@@ -799,18 +810,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="32" column="0" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#2295#2296#0" expanded="false" />
-            <element signature="e#2341#2342#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/MetricNameUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
@@ -823,14 +822,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="7" column="83" lean-forward="false" selection-start-line="7" selection-start-column="83" selection-end-line="7" selection-end-column="83" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="92" column="5" lean-forward="true" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
           <folding />
         </state>
       </provider>
@@ -859,11 +850,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/ApplicationTags.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="112" column="5" lean-forward="true" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+          <folding>
+            <element signature="e#2829#2830#0" expanded="true" />
+            <element signature="e#2853#2854#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/WavefrontJerseyFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="196" column="75" lean-forward="true" selection-start-line="196" selection-start-column="75" selection-end-line="196" selection-end-column="75" />
+        <state relative-caret-position="-597">
+          <caret line="224" column="51" lean-forward="true" selection-start-line="224" selection-start-column="51" selection-end-line="224" selection-end-column="51" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/wavefront/jersey/sdk/reporter/WavefrontJerseyReporter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="89" column="29" lean-forward="false" selection-start-line="89" selection-start-column="19" selection-end-line="89" selection-end-column="29" />
+          <folding>
+            <element signature="e#2103#2104#0" expanded="true" />
+            <element signature="e#2155#2156#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

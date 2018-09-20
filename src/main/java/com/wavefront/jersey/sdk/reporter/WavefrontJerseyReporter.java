@@ -87,7 +87,7 @@ public class WavefrontJerseyReporter implements JerseyReporter {
      * @param source Name of the source/host where your application is running.
      * @return {@code this}.
      */
-    public Builder source(String source) {
+    public Builder withSource(String source) {
       this.source = source;
       return this;
     }

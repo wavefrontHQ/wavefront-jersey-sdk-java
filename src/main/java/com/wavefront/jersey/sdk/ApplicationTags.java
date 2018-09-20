@@ -111,6 +111,7 @@ public class ApplicationTags {
    *
    * @return name of the cluster.
    */
+  @Nullable
   String getCluster() {
     return cluster;
   }
@@ -129,6 +130,7 @@ public class ApplicationTags {
    *
    * @return name of the shard.
    */
+  @Nullable
   String getShard() {
     return shard;
   }
@@ -138,6 +140,7 @@ public class ApplicationTags {
    *
    * @return custom tags.
    */
+  @Nullable
   public Map<String, String> getCustomTags() {
     return customTags;
   }
