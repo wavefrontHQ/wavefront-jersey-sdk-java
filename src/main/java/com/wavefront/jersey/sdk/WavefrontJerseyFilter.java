@@ -23,6 +23,8 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 
+import static com.wavefront.jersey.sdk.Constants.NULL_TAG_VAL;
+
 /**
  * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
  *
@@ -37,7 +39,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ThreadLocal<Long> startTime = new ThreadLocal<>();
   private final ThreadLocal<Long> startTimeCpuNanos = new ThreadLocal<>();
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
-  private final static String NULL_TAG_VAL = "none";
 
   public WavefrontJerseyFilter(JerseyReporter wfJerseyReporter, ApplicationTags applicationTags) {
     this.wfJerseyReporter = wfJerseyReporter;

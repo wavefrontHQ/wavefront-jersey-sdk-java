@@ -112,7 +112,7 @@ public class ApplicationTags {
    * @return name of the cluster.
    */
   @Nullable
-  String getCluster() {
+  public String getCluster() {
     return cluster;
   }
 
@@ -121,7 +121,7 @@ public class ApplicationTags {
    *
    * @return name of the service
    */
-  String getService() {
+  public String getService() {
     return service;
   }
 
@@ -131,7 +131,7 @@ public class ApplicationTags {
    * @return name of the shard.
    */
   @Nullable
-  String getShard() {
+  public String getShard() {
     return shard;
   }
 
