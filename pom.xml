@@ -5,13 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wavefront</groupId>
-    <artifactId>jersey-sdk</artifactId>
+    <artifactId>wavefront-jersey-sdk-java</artifactId>
     <version>0.9.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Wavefront Jersey SDK</name>
-    <description>The Wavefront Jersey SDK for RESTful Web Services in Java.
-        Use this SDK to gather metrics and histograms for your Jersey based webapp</description>
+    <name>Wavefront by VMware Jersey SDK for Java</name>
+    <description>Instruments Jersey-compliant APIs to send telemetry data to Wavefront from Java applications.</description>
     <url>https://github.com/wavefrontHQ/wavefront-jersey-sdk</url>
     <licenses>
         <license>

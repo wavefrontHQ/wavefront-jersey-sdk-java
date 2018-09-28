@@ -35,7 +35,7 @@ abstract class MetricNameUtils {
    * @return generated metric name from the jersey container request/response.
    */
   static Optional<String> metricName(ContainerRequest request,
-                                            ContainerResponseContext response) {
+                                     ContainerResponseContext response) {
     Optional<String> optionalMetricName = metricName(request, RESPONSE_PREFIX);
     return optionalMetricName.map(metricName -> metricName + "." + response.getStatus());
   }
