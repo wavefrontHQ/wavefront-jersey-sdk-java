@@ -5,6 +5,7 @@ import com.wavefront.internal.reporter.WavefrontInternalReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
+import com.wavefront.sdk.common.application.HeartbeaterService;
 import com.wavefront.sdk.entities.metrics.WavefrontMetricSender;
 
 import javax.annotation.Nullable;
@@ -15,6 +16,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import jersey.repackaged.com.google.common.base.Preconditions;
+
+import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
+
 /**
  * Wavefront reporter for your Jersey based application responsible for reporting metrics and
  * histograms out of the box for you.
@@ -24,18 +29,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WavefrontJerseyReporter implements SdkReporter {
 
   private final WavefrontInternalReporter wfReporter;
+  private final int reportingIntervalSeconds;
   private final WavefrontMetricSender wavefrontMetricSender;
   private final ApplicationTags applicationTags;
   private final String source;
+  private final HeartbeaterService heartbeaterService;
 
   private WavefrontJerseyReporter(WavefrontInternalReporter wfReporter,
+                                  int reportingIntervalSeconds,
                                   WavefrontMetricSender wavefrontMetricSender,
                                   ApplicationTags applicationTags,
                                   String source) {
+    Preconditions.checkNotNull(wfReporter, "Invalid wfReporter");
+    Preconditions.checkNotNull(wavefrontMetricSender, "Invalid wavefrontSender");
+    Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfReporter = wfReporter;
+    this.reportingIntervalSeconds = reportingIntervalSeconds;
     this.wavefrontMetricSender = wavefrontMetricSender;
     this.applicationTags = applicationTags;
     this.source = source;
+    heartbeaterService = new HeartbeaterService(wavefrontMetricSender, applicationTags,
+            JERSEY_SERVER_COMPONENT);
   }
 
   @Override
@@ -127,8 +141,18 @@ public class WavefrontJerseyReporter implements SdkReporter {
       WavefrontInternalReporter wfReporter = new WavefrontInternalReporter.Builder().
           prefixedWith(prefix).withSource(source).withReporterPointTags(pointTags).
           reportMinuteDistribution().build(wavefrontSender);
-      wfReporter.start(reportingIntervalSeconds, TimeUnit.SECONDS);
-      return new WavefrontJerseyReporter(wfReporter, wavefrontSender, applicationTags, source);
+      return new WavefrontJerseyReporter(wfReporter, reportingIntervalSeconds, wavefrontSender,
+              applicationTags, source);
     }
+  }
+
+  @Override
+  public void start() {
+    wfReporter.start(reportingIntervalSeconds, TimeUnit.SECONDS);
+  }
+
+  @Override
+  public void stop() {
+    this.heartbeaterService.close();
   }
 }

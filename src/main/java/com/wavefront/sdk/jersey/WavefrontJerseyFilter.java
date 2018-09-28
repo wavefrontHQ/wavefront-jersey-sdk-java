@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import jersey.repackaged.com.google.common.base.Preconditions;
+
 import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 
@@ -39,6 +41,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
 
   public WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags) {
+    Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
+    Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfJerseyReporter = wfJerseyReporter;
     this.applicationTags = applicationTags;
   }

@@ -55,8 +55,18 @@ public class SampleApp extends Application<Configuration> {
       @Override
       public void registerGauge(MetricName metricName, AtomicInteger value) {
         computeIfAbsent(metricName);
+      }
 
-      }}, new ApplicationTags.Builder(APPLICATION, SERVICE).cluster(CLUSTER).shard(SHARD).
+      @Override
+      public void start() {
+        // no-op
+      }
+
+      @Override
+      public void stop() {
+        // no-op
+      }
+    }, new ApplicationTags.Builder(APPLICATION, SERVICE).cluster(CLUSTER).shard(SHARD).
         customTags(new HashMap<String, String>() {{
           put("location", "SF");
           put("env", "Staging");
