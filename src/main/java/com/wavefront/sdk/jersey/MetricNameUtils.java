@@ -1,12 +1,11 @@
-package com.wavefront.jersey.sdk;
+package com.wavefront.sdk.jersey;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.model.Resource;
 
-import java.util.Optional;
-
 import javax.ws.rs.container.ContainerResponseContext;
+import java.util.Optional;
 
 /**
  * A utils class to generate metric name for Jersey based application requests/responses.

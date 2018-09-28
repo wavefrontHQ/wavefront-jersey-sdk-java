@@ -1,4 +1,4 @@
-package com.wavefront.jersey.sdk;
+package com.wavefront.sdk.jersey;
 
 /**
  * Jersey SDK constants.
@@ -6,7 +6,9 @@ package com.wavefront.jersey.sdk;
  * @author Sushant Dewan (sushant@wavefront.com).
  */
 public class Constants {
-  public final static String NULL_TAG_VAL = "none";
-  public final static String HEART_BEAT_METRIC = "component.heartbeat";
+
+  /**
+   * Name of the jersey server component.
+   */
   public final static String JERSEY_SERVER_COMPONENT = "jersey-server";
 }

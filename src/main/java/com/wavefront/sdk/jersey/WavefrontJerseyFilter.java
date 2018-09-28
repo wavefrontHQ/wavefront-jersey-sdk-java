@@ -1,13 +1,17 @@
-package com.wavefront.jersey.sdk;
+package com.wavefront.sdk.jersey;
 
+import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
-import com.wavefront.jersey.sdk.reporter.JerseyReporter;
 import com.wavefront.sdk.common.Pair;
-
+import com.wavefront.sdk.common.application.ApplicationTags;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.internal.routing.RoutingContext;
 
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
@@ -18,12 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-
-import static com.wavefront.jersey.sdk.Constants.NULL_TAG_VAL;
+import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
+import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 
 /**
  * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
@@ -32,15 +32,13 @@ import static com.wavefront.jersey.sdk.Constants.NULL_TAG_VAL;
  */
 public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-  static final String WAVEFRONT_PROVIDED_SOURCE = "wavefront-provided";
-
-  private final JerseyReporter wfJerseyReporter;
+  private final SdkReporter wfJerseyReporter;
   private final ApplicationTags applicationTags;
   private final ThreadLocal<Long> startTime = new ThreadLocal<>();
   private final ThreadLocal<Long> startTimeCpuNanos = new ThreadLocal<>();
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
 
-  public WavefrontJerseyFilter(JerseyReporter wfJerseyReporter, ApplicationTags applicationTags) {
+  public WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags) {
     this.wfJerseyReporter = wfJerseyReporter;
     this.applicationTags = applicationTags;
   }

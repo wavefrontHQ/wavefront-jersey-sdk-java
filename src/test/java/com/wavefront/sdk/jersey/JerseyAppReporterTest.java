@@ -1,18 +1,7 @@
-package com.wavefront.jersey.sdk;
+package com.wavefront.sdk.jersey;
 
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
-import com.wavefront.jersey.sdk.app.SampleApp;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
+import com.wavefront.sdk.jersey.app.SampleApp;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -20,11 +9,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
+import org.junit.Before;
+import org.junit.Test;
 
-import static com.wavefront.jersey.sdk.WavefrontJerseyFilter.WAVEFRONT_PROVIDED_SOURCE;
-import static com.wavefront.jersey.sdk.app.SampleApp.CLUSTER;
-import static com.wavefront.jersey.sdk.app.SampleApp.SERVICE;
-import static com.wavefront.jersey.sdk.app.SampleApp.SHARD;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -32,7 +26,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Sushant Dewan (sushant@wavefront.com).
  */
-public class DropwizardApplicationReporterTest {
+public class JerseyAppReporterTest {
 
   private final SampleApp sampleApp = new SampleApp();
 
@@ -55,9 +49,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(204, invokePostRequest("sample/foo/bar"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barCreate");
     }};
@@ -80,7 +74,7 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
+          put("cluster", SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -88,17 +82,17 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.aggregated_per_shard", new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barCreate");
       put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -115,9 +109,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(200, invokeGetRequest("sample/foo/bar/123"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barGet");
     }};
@@ -140,7 +134,7 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
+          put("cluster", SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -148,8 +142,8 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -157,9 +151,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
-          put("shard", SHARD);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
+          put("shard", SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -176,9 +170,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(204, invokePutRequest("sample/foo/bar/123"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barUpdate");
     }};
@@ -201,7 +195,7 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
+          put("cluster", SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -209,8 +203,8 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -218,9 +212,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
-          put("shard", SHARD);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
+          put("shard", SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -237,9 +231,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(204, invokeDeleteRequest("sample/foo/bar/123"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barDelete");
     }};
@@ -262,7 +256,7 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
+          put("cluster", SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -270,8 +264,8 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -279,9 +273,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
-          put("shard", SHARD);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
+          put("shard", SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -298,9 +292,9 @@ public class DropwizardApplicationReporterTest {
     assertEquals(200, invokeGetRequest("sample/foo/bar"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "getAll");
     }};
@@ -323,7 +317,7 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
+          put("cluster", SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -331,17 +325,17 @@ public class DropwizardApplicationReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.aggregated_per_shard", new HashMap<String, String>() {{
-      put("cluster", CLUSTER);
-      put("service", SERVICE);
-      put("shard", SHARD);
+      put("cluster", SampleApp.CLUSTER);
+      put("service", SampleApp.SERVICE);
+      put("shard", SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "getAll");
       put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -431,40 +425,40 @@ public class DropwizardApplicationReporterTest {
     // jersey.server.total_requests.inflight gauge should be 0
     assertEquals(0, sampleApp.reportedValue(new MetricName(
         "request.inflight", new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
-          put("shard", SHARD);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
+          put("shard", SampleApp.SHARD);
     }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_source",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
-          put("shard", SHARD);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
+          put("shard", SampleApp.SHARD);
     }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
-          put("shard", SHARD);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
+          put("shard", SampleApp.SHARD);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
-          put("service", SERVICE);
+          put("cluster", SampleApp.CLUSTER);
+          put("service", SampleApp.SERVICE);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", CLUSTER);
+          put("cluster", SampleApp.CLUSTER);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
