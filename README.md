@@ -59,7 +59,7 @@ Now create ApplicationTags instance using the above metatdata.
 ### WavefrontSender
 We need to instantiate WavefrontSender 
 (i.e. either WavefrontProxyClient or WavefrontDirectIngestionClient)
-Refer to this page (https://github.com/wavefrontHQ/wavefront-java-sdk/blob/master/README.md)
+Refer to this page (https://github.com/wavefrontHQ/wavefront-sdk-java#wavefrontsender)
 to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 
 ### WavefrontJerseyReporter
