@@ -7,7 +7,7 @@ If you are using Maven, add following maven dependency to your pom.xml
 ```
 <dependency>
     <groupId>com.wavefront</groupId>
-    <artifactId>jersey-sdk</artifactId>
+    <artifactId>wavefront-jersey-sdk-java</artifactId>
     <version>0.9.0</version>
 </dependency>
 ```
@@ -61,6 +61,10 @@ We need to instantiate WavefrontSender
 (i.e. either WavefrontProxyClient or WavefrontDirectIngestionClient)
 Refer to this page (https://github.com/wavefrontHQ/wavefront-sdk-java#wavefrontsender)
 to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
+<br />
+<br />
+**Note:** If you are using more than one Wavefront SDK (i.e. wavefront-opentracing-sdk-java, wavefront-dropwizard-metrics-sdk-java, wavefront-jersey-sdk-java, wavefront-grpc-sdk-java etc.) that requires you to instantiate WavefrontSender, then you should instantiate the WavefrontSender only once and share that sender instance across multiple SDKs inside the same JVM.
+If the SDKs will be installed on different JVMs, then you would need to instantiate one WavefrontSender per JVM.
 
 ### WavefrontJerseyReporter
 ```java
@@ -80,7 +84,6 @@ to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 ```
 
 ### Construct WavefrontJerseyFilter
-Last step is to construct the Wavefront Jersey filter.
 ```java
     /* Now create a Wavefront Jersey Filter which you can add to your 
     * Jersey based (Dropwizard, Springboot etc.) application  */
