@@ -65,7 +65,7 @@ to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 ### WavefrontJerseyReporter
 ```java
 
-    /* Create WavefrontJerseyReporter.Builder using applicationTags.
+    /* Create WavefrontJerseyReporter.Builder using applicationTags. */
     WavefrontJerseyReporter.Builder builder = new WavefrontJerseyReporter.Builder(applicationTags);
 
     /* Set the source for your metrics and histograms */
@@ -86,6 +86,15 @@ Last step is to construct the Wavefront Jersey filter.
     * Jersey based (Dropwizard, Springboot etc.) application  */
     WavefrontJerseyFilter wfJerseyFilter = new WavefrontJerseyFilter(wfJerseyReporter, 
         applicationTags);
+```
+
+### Starting and stopping the reporter
+```java
+    /* Once the reporter and filter is instantiated, start the reporter */
+    wfJerseyReporter.start();
+
+    /* Before shutting down your Jersey application, stop your reporter */
+    wfJerseyReporter.stop();
 ```
 
 ## Out of the box metrics and histograms for your Jersey based application.
@@ -152,3 +161,4 @@ This includes all the completed requests that resulted in an error response (tha
 |jersey.server.response.errors.aggregated_per_service.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|Inventory|n/a|
 |jersey.server.response.errors.aggregated_per_cluster.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|n/a|n/a|
 |jersey.server.response.errors.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
+
