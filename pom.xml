@@ -99,8 +99,8 @@
         <dependency>
             <groupId>com.wavefront</groupId>
             <artifactId>wavefront-sdk-java</artifactId>
-            <!-- TODO change from SNAPSHOT to v0.9.0 -->
-            <version>0.9.0-SNAPSHOT</version>
+            <!-- TODO see if you can avoid this dependency altogether and rely on transitive dependency via tier 2 -->
+            <version>0.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
