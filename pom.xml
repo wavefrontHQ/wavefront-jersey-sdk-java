@@ -64,16 +64,6 @@
                                     <exclude>junit:junit</exclude>
                                 </excludes>
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.glassfish</pattern>
-                                    <shadedPattern>com.wavefront.jersey-sdk.org.glassfish</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.jvnet</pattern>
-                                    <shadedPattern>com.wavefront.jersey-sdk.org.jvnet</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <filters>
                                 <filter>
                                     <excludes>
