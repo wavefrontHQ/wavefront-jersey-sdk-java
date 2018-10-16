@@ -136,6 +136,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         decorator.decorateResponse(containerResponseContext, spanWrapper.get());
       }
     }
+    spanWrapper.getScope().close();
+    spanWrapper.finish();
     if (containerRequestContext instanceof ContainerRequest) {
       ContainerRequest request = (ContainerRequest) containerRequestContext;
       ExtendedUriInfo uriInfo = request.getUriInfo();
