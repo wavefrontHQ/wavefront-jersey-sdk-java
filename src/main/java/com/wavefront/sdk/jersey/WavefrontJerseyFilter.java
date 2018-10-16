@@ -352,7 +352,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       SpanWrapper spanWrapper = getSpanWrapper(httpRequest);
       if (spanWrapper != null) {
         Tags.HTTP_STATUS.set(spanWrapper.get(), httpResponse.getStatus());
-        addExceptionLogs(spanWrapper.get(), ex);
+        // addExceptionLogs(spanWrapper.get(), ex);
       }
       throw ex;
     } finally {
