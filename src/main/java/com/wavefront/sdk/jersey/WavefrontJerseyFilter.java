@@ -77,8 +77,21 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
     if (containerRequestContext instanceof ContainerRequest) {
+      ContainerRequest request = (ContainerRequest) containerRequestContext;
+      startTime.set(System.currentTimeMillis());
+      startTimeCpuNanos.set(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime());
+      Optional<String> optional = MetricNameUtils.metricName(request);
+      if (!optional.isPresent()) {
+        return;
+      }
+      String requestMetricKey = optional.get();
+      ExtendedUriInfo uriInfo = request.getUriInfo();
+      Pair<String, String> pair = getClassAndMethodName(uriInfo);
+      String finalClassName = pair._1;
+      String finalMethodName = pair._2;
+
       if (tracer != null) {
-        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(containerRequestContext.getMethod())
+        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalMethodName)
                 .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER);
         SpanContext parentSpanContext = parentSpanContext(containerRequestContext);
         if (parentSpanContext != null) {
@@ -92,18 +105,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         }
         containerRequestContext.setProperty(SpanWrapper.PROPERTY_NAME, new SpanWrapper(scope));
       }
-      ContainerRequest request = (ContainerRequest) containerRequestContext;
-      startTime.set(System.currentTimeMillis());
-      startTimeCpuNanos.set(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime());
-      Optional<String> optional = MetricNameUtils.metricName(request);
-      if (!optional.isPresent()) {
-        return;
-      }
-      String requestMetricKey = optional.get();
-      ExtendedUriInfo uriInfo = request.getUriInfo();
-      Pair<String, String> pair = getClassAndMethodName(uriInfo);
-      String finalClassName = pair._1;
-      String finalMethodName = pair._2;
 
        /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
