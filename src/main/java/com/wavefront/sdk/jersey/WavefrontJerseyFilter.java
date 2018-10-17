@@ -4,10 +4,24 @@ import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.common.application.ApplicationTags;
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.SpanContext;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.jaxrs2.internal.CastUtils;
+import io.opentracing.contrib.jaxrs2.server.ServerHeadersExtractTextMap;
+import io.opentracing.contrib.jaxrs2.server.ServerSpanDecorator;
+import io.opentracing.tag.Tags;
+import io.opentracing.propagation.Format;
+import io.opentracing.contrib.jaxrs2.internal.SpanWrapper;
+import io.opentracing.contrib.jaxrs2.server.OperationNameProvider;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.internal.routing.RoutingContext;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -17,6 +31,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -26,13 +42,14 @@ import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
+import static io.opentracing.contrib.jaxrs2.internal.SpanWrapper.PROPERTY_NAME;
 
 /**
  * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
  *
  * @author Sushant Dewan (sushant@wavefront.com).
  */
-public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerResponseFilter, Filter {
 
   private final SdkReporter wfJerseyReporter;
   private final ApplicationTags applicationTags;
@@ -40,11 +57,21 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ThreadLocal<Long> startTimeCpuNanos = new ThreadLocal<>();
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
 
+  private Tracer tracer;
+  private List<ServerSpanDecorator> spanDecorators;
+  private OperationNameProvider.Builder operationNameProvider;
+
   public WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags) {
     Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfJerseyReporter = wfJerseyReporter;
     this.applicationTags = applicationTags;
+  }
+
+  public WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags, Tracer tracer) {
+    this(wfJerseyReporter, applicationTags);
+    this.tracer = tracer;
+    this.spanDecorators = Collections.singletonList(ServerSpanDecorator.STANDARD_TAGS);
   }
 
   @Override
@@ -62,6 +89,22 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
+
+      if (tracer != null) {
+        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalMethodName)
+                .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER);
+        SpanContext parentSpanContext = parentSpanContext(containerRequestContext);
+        if (parentSpanContext != null) {
+          spanBuilder.asChildOf(parentSpanContext);
+        }
+        Scope scope = spanBuilder.startActive(false);
+        if (spanDecorators != null) {
+          for (ServerSpanDecorator decorator: spanDecorators) {
+            decorator.decorateRequest(containerRequestContext, scope.span());
+          }
+        }
+        containerRequestContext.setProperty(SpanWrapper.PROPERTY_NAME, new SpanWrapper(scope));
+      }
 
        /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
@@ -84,6 +127,15 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   public void filter(ContainerRequestContext containerRequestContext,
                      ContainerResponseContext containerResponseContext)
       throws IOException {
+    SpanWrapper spanWrapper = CastUtils.cast(containerRequestContext.getProperty(PROPERTY_NAME), SpanWrapper.class);
+    if (spanWrapper == null) {
+      return;
+    }
+    if (spanDecorators != null) {
+      for (ServerSpanDecorator decorator: spanDecorators) {
+        decorator.decorateResponse(containerResponseContext, spanWrapper.get());
+      }
+    }
     if (containerRequestContext instanceof ContainerRequest) {
       ContainerRequest request = (ContainerRequest) containerRequestContext;
       ExtendedUriInfo uriInfo = request.getUriInfo();
@@ -283,6 +335,86 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
     }
   }
 
+  @Override
+  public void init(FilterConfig filterConfig) {
+  }
+
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+
+    HttpServletResponse httpResponse = (HttpServletResponse)response;
+    HttpServletRequest httpRequest = (HttpServletRequest)request;
+
+    try {
+      chain.doFilter(request, response);
+    } catch (Exception ex) {
+      SpanWrapper spanWrapper = getSpanWrapper(httpRequest);
+      if (spanWrapper != null) {
+        Tags.HTTP_STATUS.set(spanWrapper.get(), httpResponse.getStatus());
+        // addExceptionLogs(spanWrapper.get(), ex);
+      }
+      throw ex;
+    } finally {
+      SpanWrapper spanWrapper = getSpanWrapper(httpRequest);
+      if (spanWrapper != null) {
+        spanWrapper.getScope().close();
+        if (request.isAsyncStarted()) {
+          request.getAsyncContext().addListener(new SpanFinisher(spanWrapper), request, response);
+        } else {
+          spanWrapper.finish();
+        }
+      }
+    }
+  }
+
+  @Override
+  public void destroy() {
+
+  }
+
+  private SpanWrapper getSpanWrapper(HttpServletRequest request) {
+    return CastUtils.cast(request.getAttribute(SpanWrapper.PROPERTY_NAME), SpanWrapper.class);
+  }
+
+  static class SpanFinisher implements AsyncListener {
+    private SpanWrapper spanWrapper;
+    SpanFinisher(SpanWrapper spanWrapper) {
+      this.spanWrapper = spanWrapper;
+    }
+
+    @Override
+    public void onComplete(AsyncEvent event) throws IOException {
+      HttpServletResponse httpResponse = (HttpServletResponse)event.getSuppliedResponse();
+      if (httpResponse.getStatus() >= 500) {
+        addExceptionLogs(spanWrapper.get(), event.getThrowable());
+      }
+      Tags.HTTP_STATUS.set(spanWrapper.get(), httpResponse.getStatus());
+      spanWrapper.finish();
+    }
+    @Override
+    public void onTimeout(AsyncEvent event) throws IOException {
+    }
+    @Override
+    public void onError(AsyncEvent event) throws IOException {
+      // this handler is called when exception is thrown in async handler
+      // note that exception logs are added in filter not here
+    }
+    @Override
+    public void onStartAsync(AsyncEvent event) throws IOException {
+    }
+  }
+
+  private static void addExceptionLogs(Span span, Throwable throwable) {
+    Tags.ERROR.set(span, true);
+    if (throwable != null) {
+      Map<String, Object> errorLogs = new HashMap<>(2);
+      errorLogs.put("event", Tags.ERROR.getKey());
+      errorLogs.put("error.object", throwable);
+      span.log(errorLogs);
+    }
+  }
+
   private Pair<String, String> getClassAndMethodName(ExtendedUriInfo uriInfo) {
     String className = "unknown";
     String methodName = "unknown";
@@ -317,5 +449,38 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       put("jersey.resource.class", finalClassName);
       put("jersey" + ".resource.method", finalMethodName);
     }};
+  }
+
+  private SpanContext parentSpanContext(ContainerRequestContext requestContext) {
+    Span activeSpan = tracer.activeSpan();
+    if (activeSpan != null) {
+      return activeSpan.context();
+    } else {
+      return tracer.extract(
+              Format.Builtin.HTTP_HEADERS,
+              new ServerHeadersExtractTextMap(requestContext.getHeaders())
+      );
+    }
+  }
+
+  static class CustomeOperationNameProvider implements OperationNameProvider {
+    private final String methodName;
+
+    private CustomeOperationNameProvider(String methodName) {
+      this.methodName = methodName;
+    }
+
+    static class Builder implements OperationNameProvider.Builder {
+
+      @Override
+      public OperationNameProvider build(Class<?> clazz, Method method) {
+        return new CustomeOperationNameProvider(method.getName());
+      }
+    }
+
+    @Override
+    public String operationName(ContainerRequestContext requestContext) {
+      return methodName;
+    }
   }
 }
