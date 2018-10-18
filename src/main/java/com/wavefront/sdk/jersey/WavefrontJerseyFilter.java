@@ -26,7 +26,13 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Iterator;
+import java.util.AbstractMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,6 +41,7 @@ import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
+import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
 
 /**
  * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
@@ -50,8 +57,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ThreadLocal<Boolean> finished = ThreadLocal.withInitial(() -> false);
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
   private final String PROPERTY_NAME = "io.opentracing.contrib.jaxrs2.internal.SpanWrapper.activeSpanWrapper";
-
-  private Tracer tracer;
+  private final Tracer tracer;
 
   public WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags,
                                @Nullable Tracer tracer) {
@@ -60,6 +66,28 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
     this.wfJerseyReporter = wfJerseyReporter;
     this.applicationTags = applicationTags;
     this.tracer = tracer;
+  }
+
+  public static final class Builder {
+
+    private final SdkReporter wfJerseyReporter;
+    private final ApplicationTags applicationTags;
+    private Tracer tracer;
+
+    public Builder(SdkReporter wfJerseyReporter, ApplicationTags applicationTags) {
+      this.wfJerseyReporter = wfJerseyReporter;
+      this.applicationTags = applicationTags;
+    }
+
+    public WavefrontJerseyFilter.Builder withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
+    public WavefrontJerseyFilter build() {
+      return new WavefrontJerseyFilter(wfJerseyReporter, applicationTags, tracer);
+    }
+
   }
 
   @Override
@@ -372,7 +400,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   }
 
   private void decorateRequest(ContainerRequestContext requestContext, Span span) {
-    Tags.COMPONENT.set(span, "jaxrs");
+    Tags.COMPONENT.set(span, JERSEY_SERVER_COMPONENT);
     Tags.HTTP_METHOD.set(span, requestContext.getMethod());
     String urlStr = null;
     URL url;
@@ -388,7 +416,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   }
 
   private void decorateResponse(ContainerResponseContext responseContext, Span span) {
-    Tags.HTTP_STATUS.set(span, responseContext.getStatus());
+    int status = responseContext.getStatus();
+    Tags.HTTP_STATUS.set(span, status);
+    if (status >= 400) {
+      Tags.ERROR.set(span, true);
+    }
   }
 
   public class ServerHeadersExtractTextMap implements TextMap {
