@@ -35,14 +35,15 @@ public class WavefrontJerseyReporter implements SdkReporter {
   private WavefrontJerseyReporter(WavefrontInternalReporter wfReporter,
                                   int reportingIntervalSeconds,
                                   WavefrontMetricSender wavefrontMetricSender,
-                                  ApplicationTags applicationTags) {
+                                  ApplicationTags applicationTags,
+                                  String source) {
     Preconditions.checkNotNull(wfReporter, "Invalid wfReporter");
     Preconditions.checkNotNull(wavefrontMetricSender, "Invalid wavefrontSender");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfReporter = wfReporter;
     this.reportingIntervalSeconds = reportingIntervalSeconds;
     heartbeaterService = new HeartbeaterService(wavefrontMetricSender, applicationTags,
-            JERSEY_SERVER_COMPONENT);
+            JERSEY_SERVER_COMPONENT, source);
   }
 
   @Override
@@ -135,7 +136,7 @@ public class WavefrontJerseyReporter implements SdkReporter {
           prefixedWith(prefix).withSource(source).withReporterPointTags(pointTags).
           reportMinuteDistribution().build(wavefrontSender);
       return new WavefrontJerseyReporter(wfReporter, reportingIntervalSeconds, wavefrontSender,
-              applicationTags);
+              applicationTags, source);
     }
   }
 
