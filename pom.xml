@@ -126,16 +126,7 @@
             <groupId>io.opentracing</groupId>
             <artifactId>opentracing-api</artifactId>
             <version>0.31.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.opentracing.contrib</groupId>
-            <artifactId>opentracing-jaxrs2</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
