@@ -57,9 +57,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ThreadLocal<Boolean> finished = ThreadLocal.withInitial(() -> false);
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
   private final String PROPERTY_NAME = "io.opentracing.contrib.jaxrs2.internal.SpanWrapper.activeSpanWrapper";
+  @Nullable
   private final Tracer tracer;
 
-  public WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags,
+  private WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags,
                                @Nullable Tracer tracer) {
     Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
@@ -79,7 +80,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       this.applicationTags = applicationTags;
     }
 
-    public WavefrontJerseyFilter.Builder withTracer(Tracer tracer) {
+    public Builder withTracer(Tracer tracer) {
       this.tracer = tracer;
       return this;
     }
@@ -113,6 +114,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         if (parentSpanContext != null) {
           spanBuilder.asChildOf(parentSpanContext);
         }
+        finished.set(false);
         Scope scope = spanBuilder.startActive(false);
         decorateRequest(containerRequestContext, scope.span());
         containerRequestContext.setProperty(PROPERTY_NAME, scope);
@@ -292,8 +294,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
        * 4) <prefix>.response.errors.aggregated_per_cluster (DeltaCounter)
        * 5) <prefix>.response.errors.aggregated_per_application (DeltaCounter)
        */
-      int statusCode = containerResponseContext.getStatus();
-      if (statusCode >= 400 && statusCode <= 599) {
+      if (isErrorStatusCode(containerResponseContext)) {
         wfJerseyReporter.incrementCounter(new MetricName("response.errors",
             completeTagsMap));
         wfJerseyReporter.incrementCounter(new MetricName(
@@ -416,11 +417,13 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   }
 
   private void decorateResponse(ContainerResponseContext responseContext, Span span) {
-    int status = responseContext.getStatus();
-    Tags.HTTP_STATUS.set(span, status);
-    if (status >= 400) {
-      Tags.ERROR.set(span, true);
-    }
+    Tags.HTTP_STATUS.set(span, responseContext.getStatus());
+    Tags.ERROR.set(span, isErrorStatusCode(responseContext));
+  }
+
+  private boolean isErrorStatusCode(ContainerResponseContext containerResponseContext) {
+    int statusCode = containerResponseContext.getStatus();
+    return statusCode >= 400 && statusCode <= 599;
   }
 
   public class ServerHeadersExtractTextMap implements TextMap {
