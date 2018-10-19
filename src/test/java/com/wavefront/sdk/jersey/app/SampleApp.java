@@ -36,7 +36,7 @@ public class SampleApp extends Application<Configuration> {
   public void run(Configuration configuration, Environment environment) {
     environment.jersey().register(new SampleResource());
     environment.getApplicationContext().setContextPath("/sample");
-    environment.jersey().register(new WavefrontJerseyFilter(new SdkReporter() {
+    environment.jersey().register(new WavefrontJerseyFilter.Builder(new SdkReporter() {
       @Override
       public void incrementCounter(MetricName metricName) {
         computeIfAbsent(metricName).incrementAndGet();
@@ -70,7 +70,7 @@ public class SampleApp extends Application<Configuration> {
         customTags(new HashMap<String, String>() {{
           put("location", "SF");
           put("env", "Staging");
-        }}).build()));
+        }}).build()).build());
   }
 
   public int reportedValue(MetricName metricName) {

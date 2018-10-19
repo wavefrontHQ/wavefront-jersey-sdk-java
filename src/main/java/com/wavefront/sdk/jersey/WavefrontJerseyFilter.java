@@ -11,6 +11,8 @@ import io.opentracing.Tracer;
 import io.opentracing.propagation.TextMap;
 import io.opentracing.tag.Tags;
 import io.opentracing.propagation.Format;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.internal.routing.RoutingContext;
@@ -108,8 +110,19 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalMethodName = pair._2;
 
       if (tracer != null) {
-        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalMethodName)
-                .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER);
+        String finalMatchingPath = "";
+        Resource matchedResource = request.getUriInfo().getMatchedModelResource();
+        if (matchedResource != null) {
+          finalMatchingPath = stripLeadingAndTrailingSlashes(matchedResource.getPath());
+          while (matchedResource.getParent() != null) {
+            matchedResource = matchedResource.getParent();
+            finalMatchingPath = stripLeadingAndTrailingSlashes(matchedResource.getPath()) + "/" + finalMatchingPath;
+          }
+        }
+        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalMethodName).
+                withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER).
+                withTag("jersey.resource.class", finalClassName).
+                withTag("jersey.path", finalMatchingPath);
         SpanContext parentSpanContext = parentSpanContext(containerRequestContext);
         if (parentSpanContext != null) {
           spanBuilder.asChildOf(parentSpanContext);
@@ -424,6 +437,14 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private boolean isErrorStatusCode(ContainerResponseContext containerResponseContext) {
     int statusCode = containerResponseContext.getStatus();
     return statusCode >= 400 && statusCode <= 599;
+  }
+
+  private String stripLeadingAndTrailingSlashes(String path) {
+    if (path == null) {
+      return "";
+    } else {
+      return StringUtils.strip(path, "/");
+    }
   }
 
   public class ServerHeadersExtractTextMap implements TextMap {
