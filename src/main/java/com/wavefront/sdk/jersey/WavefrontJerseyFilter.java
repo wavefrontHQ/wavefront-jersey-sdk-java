@@ -56,7 +56,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ApplicationTags applicationTags;
   private final ThreadLocal<Long> startTime = new ThreadLocal<>();
   private final ThreadLocal<Long> startTimeCpuNanos = new ThreadLocal<>();
-  private final ThreadLocal<Boolean> finished = ThreadLocal.withInitial(() -> false);
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
   private final String PROPERTY_NAME = "io.opentracing.contrib.jaxrs2.internal.SpanWrapper.activeSpanWrapper";
   @Nullable
@@ -127,7 +126,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         if (parentSpanContext != null) {
           spanBuilder.asChildOf(parentSpanContext);
         }
-        finished.set(false);
         Scope scope = spanBuilder.startActive(false);
         decorateRequest(containerRequestContext, scope.span());
         containerRequestContext.setProperty(PROPERTY_NAME, scope);
@@ -159,10 +157,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       if (scope != null) {
         decorateResponse(containerResponseContext, scope.span());
         scope.close();
-        if (!finished.get()) {
-          finished.set(true);
-          scope.span().finish();
-        }
+        scope.span().finish();
       }
     } catch (ClassCastException ex) {
       // no valid scope found
