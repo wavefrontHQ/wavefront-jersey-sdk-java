@@ -147,5 +147,6 @@ public class WavefrontJerseyReporter implements SdkReporter {
   @Override
   public void stop() {
     heartbeaterService.close();
+    wfReporter.stop();
   }
 }
