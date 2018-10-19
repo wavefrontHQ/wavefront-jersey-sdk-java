@@ -29,10 +29,12 @@ import static org.junit.Assert.assertEquals;
 public class JerseyAppReporterTest {
 
   private final SampleApp sampleApp = new SampleApp();
+  private int httpPort;
 
   @Before
   public void setup() throws Exception {
     sampleApp.run("server");
+    httpPort = sampleApp.getHttpPort();
   }
 
   @Test
@@ -349,7 +351,7 @@ public class JerseyAppReporterTest {
   }
 
   private int invokePostRequest(String pathSegments) throws IOException {
-    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(8080).
+    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(httpPort).
         addPathSegments(pathSegments).build();
     Request request = new Request.Builder().url(url).
         post(new RequestBody() {
@@ -370,7 +372,7 @@ public class JerseyAppReporterTest {
   }
 
   private int invokeGetRequest(String pathSegments) throws IOException {
-    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(8080).
+    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(httpPort).
         addPathSegments(pathSegments).build();
     Request.Builder requestBuilder = new Request.Builder().url(url);
     OkHttpClient okHttpClient = new OkHttpClient().newBuilder().build();
@@ -380,7 +382,7 @@ public class JerseyAppReporterTest {
   }
 
   private int invokePutRequest(String pathSegments) throws IOException {
-    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(8080).
+    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(httpPort).
         addPathSegments(pathSegments).build();
     Request request = new Request.Builder().url(url).
         put(new RequestBody() {
@@ -401,7 +403,7 @@ public class JerseyAppReporterTest {
   }
 
   private int invokeDeleteRequest(String pathSegments) throws IOException {
-    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(8080).
+    HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(httpPort).
         addPathSegments(pathSegments).build();
     Request request = new Request.Builder().url(url).
         delete(new RequestBody() {

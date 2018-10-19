@@ -1,12 +1,16 @@
 package com.wavefront.sdk.jersey.app;
 
+import com.google.common.collect.Lists;
 import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.jersey.WavefrontJerseyFilter;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.server.ServerConnector;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,6 +29,7 @@ public class SampleApp extends Application<Configuration> {
   public static final String CLUSTER = "prod";
   public static final String SERVICE = "alerting";
   public static final String SHARD = "secondary";
+  private int httpPort;
 
   private final ConcurrentMap<MetricName, AtomicInteger> cache = new ConcurrentHashMap<>();
 
@@ -34,6 +39,17 @@ public class SampleApp extends Application<Configuration> {
 
   @Override
   public void run(Configuration configuration, Environment environment) {
+    DefaultServerFactory defaultHttp = (DefaultServerFactory) configuration.getServerFactory();
+    HttpConnectorFactory appConnectorFactory = new HttpConnectorFactory();
+    HttpConnectorFactory adminConnectorFactory = new HttpConnectorFactory();
+    // set random available port.
+    appConnectorFactory.setPort(0);
+    adminConnectorFactory.setPort(0);
+    defaultHttp.setApplicationConnectors(Lists.newArrayList(appConnectorFactory));
+    defaultHttp.setAdminConnectors(Lists.newArrayList(adminConnectorFactory));
+    environment.lifecycle().addServerLifecycleListener(server -> {
+      httpPort = ((ServerConnector) server.getConnectors()[0]).getLocalPort();
+    });
     environment.jersey().register(new SampleResource());
     environment.getApplicationContext().setContextPath("/sample");
     environment.jersey().register(new WavefrontJerseyFilter(new SdkReporter() {
@@ -118,5 +134,9 @@ public class SampleApp extends Application<Configuration> {
     public void barDelete() {
       // no-op
     }
+  }
+
+  public int getHttpPort() {
+    return httpPort;
   }
 }
