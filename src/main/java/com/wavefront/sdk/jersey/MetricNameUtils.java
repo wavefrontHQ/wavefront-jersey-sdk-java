@@ -1,5 +1,6 @@
 package com.wavefront.sdk.jersey;
 
+import com.wavefront.sdk.common.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.model.Resource;
@@ -23,7 +24,7 @@ abstract class MetricNameUtils {
    * @param request jersey container request.
    * @return generated metric name from the jersey container request.
    */
-  static Optional<String> metricName(ContainerRequest request) {
+  static Optional<Pair<String, String>> metricName(ContainerRequest request) {
     return metricName(request, REQUEST_PREFIX);
   }
 
@@ -36,11 +37,11 @@ abstract class MetricNameUtils {
    */
   static Optional<String> metricName(ContainerRequest request,
                                      ContainerResponseContext response) {
-    Optional<String> optionalMetricName = metricName(request, RESPONSE_PREFIX);
-    return optionalMetricName.map(metricName -> metricName + "." + response.getStatus());
+    Optional<Pair<String, String>> optionalMetricName = metricName(request, RESPONSE_PREFIX);
+    return optionalMetricName.map(metricName -> metricName._1 + "." + response.getStatus());
   }
 
-  private static Optional<String> metricName(ContainerRequest request, String prefix) {
+  private static Optional<Pair<String, String>> metricName(ContainerRequest request, String prefix) {
     Resource matchedResource = request.getUriInfo().getMatchedModelResource();
     if (matchedResource != null) {
       StringBuilder matchingPath = new StringBuilder(stripLeadingAndTrailingSlashes(
@@ -52,7 +53,7 @@ abstract class MetricNameUtils {
       }
       Optional<String> optionalMetricName = metricName(request.getMethod(),
           matchingPath.toString());
-      return optionalMetricName.map(metricName -> prefix + metricName);
+      return optionalMetricName.map(metricName -> new Pair<>(prefix + metricName, matchingPath.toString()));
     }
     return Optional.empty();
   }

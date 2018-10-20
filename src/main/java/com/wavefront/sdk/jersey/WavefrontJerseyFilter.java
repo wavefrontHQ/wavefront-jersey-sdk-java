@@ -74,6 +74,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
     private final SdkReporter wfJerseyReporter;
     private final ApplicationTags applicationTags;
+    @Nullable
     private Tracer tracer;
 
     public Builder(SdkReporter wfJerseyReporter, ApplicationTags applicationTags) {
@@ -98,26 +99,18 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       ContainerRequest request = (ContainerRequest) containerRequestContext;
       startTime.set(System.currentTimeMillis());
       startTimeCpuNanos.set(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime());
-      Optional<String> optional = MetricNameUtils.metricName(request);
+      Optional<Pair<String, String>> optional = MetricNameUtils.metricName(request);
       if (!optional.isPresent()) {
         return;
       }
-      String requestMetricKey = optional.get();
+      String requestMetricKey = optional.get()._1;
+      String finalMatchingPath = optional.get()._2;
       ExtendedUriInfo uriInfo = request.getUriInfo();
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
       if (tracer != null) {
-        String finalMatchingPath = "";
-        Resource matchedResource = request.getUriInfo().getMatchedModelResource();
-        if (matchedResource != null) {
-          finalMatchingPath = stripLeadingAndTrailingSlashes(matchedResource.getPath());
-          while (matchedResource.getParent() != null) {
-            matchedResource = matchedResource.getParent();
-            finalMatchingPath = stripLeadingAndTrailingSlashes(matchedResource.getPath()) + "/" + finalMatchingPath;
-          }
-        }
         Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalMethodName).
                 withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER).
                 withTag("jersey.resource.class", finalClassName).
@@ -170,16 +163,16 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
-      Optional<String> optional = MetricNameUtils.metricName(request);
-      if (!optional.isPresent()) {
+      Optional<Pair<String, String>> requestOptional = MetricNameUtils.metricName(request);
+      if (!requestOptional.isPresent()) {
         return;
       }
-      String requestMetricKey = optional.get();
-      optional = MetricNameUtils.metricName(request, containerResponseContext);
-      if (!optional.isPresent()) {
+      String requestMetricKey = requestOptional.get()._1;
+      Optional<String> responseOptional = MetricNameUtils.metricName(request, containerResponseContext);
+      if (!responseOptional.isPresent()) {
         return;
       }
-      String responseMetricKey = optional.get();
+      String responseMetricKey = responseOptional.get();
 
       /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
@@ -432,14 +425,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private boolean isErrorStatusCode(ContainerResponseContext containerResponseContext) {
     int statusCode = containerResponseContext.getStatus();
     return statusCode >= 400 && statusCode <= 599;
-  }
-
-  private String stripLeadingAndTrailingSlashes(String path) {
-    if (path == null) {
-      return "";
-    } else {
-      return StringUtils.strip(path, "/");
-    }
   }
 
   public class ServerHeadersExtractTextMap implements TextMap {
