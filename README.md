@@ -182,7 +182,7 @@ This includes all the completed requests that resulted in an error response (tha
 
 ### Tracing Spans
 
-Every span will have start time in millisec along with duration in millisec. The following table includes all the attributes of generated tracing span.  
+Every span will have the operation name as span name, start time in millisec along with duration in millisec. The following table includes all the rest attributes of generated tracing spans.  
 
 | Span Tag Key          | Span Tag Value                         |
 | --------------------- | -------------------------------------- |
