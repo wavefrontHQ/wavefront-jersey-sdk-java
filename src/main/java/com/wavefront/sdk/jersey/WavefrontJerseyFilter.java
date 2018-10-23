@@ -11,8 +11,6 @@ import io.opentracing.Tracer;
 import io.opentracing.propagation.TextMap;
 import io.opentracing.tag.Tags;
 import io.opentracing.propagation.Format;
-import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.internal.routing.RoutingContext;

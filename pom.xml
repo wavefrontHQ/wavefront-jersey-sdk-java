@@ -82,12 +82,6 @@
     <dependencies>
         <dependency>
             <groupId>com.wavefront</groupId>
-            <artifactId>wavefront-sdk-java</artifactId>
-            <!-- TODO see if you can avoid this dependency altogether and rely on transitive dependency via tier 2 -->
-            <version>0.9.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wavefront</groupId>
             <artifactId>wavefront-internal-reporter-java</artifactId>
             <!-- TODO change from SNAPSHOT to v0.9.0 -->
             <version>0.9.0-SNAPSHOT</version>

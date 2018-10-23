@@ -72,7 +72,7 @@ To enable sending tracing spans from the SDK, we need to instantiate a Wavefront
     Tracer tracer = new WavefrontTracer.Builder().withReporter(reporter).
         withApplicationTags(applicationTags).build();
 ```
-The `applicationTags` here is initiated as described above. The `reporter` here can be any kind of `WavefrontSpanReporter`, refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
+The `applicationTags` here is instantiated as described above. The `reporter` here can be any kind of `WavefrontSpanReporter`, refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
 
 ### WavefrontJerseyReporter
 ```java
