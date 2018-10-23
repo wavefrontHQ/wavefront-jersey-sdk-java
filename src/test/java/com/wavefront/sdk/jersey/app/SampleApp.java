@@ -3,6 +3,9 @@ package com.wavefront.sdk.jersey.app;
 import com.google.common.collect.Lists;
 import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
+import com.wavefront.opentracing.WavefrontSpan;
+import com.wavefront.opentracing.WavefrontTracer;
+import com.wavefront.opentracing.reporting.Reporter;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.jersey.WavefrontJerseyFilter;
 import io.dropwizard.Application;
@@ -32,6 +35,7 @@ public class SampleApp extends Application<Configuration> {
   private int httpPort;
 
   private final ConcurrentMap<MetricName, AtomicInteger> cache = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, WavefrontSpan> spanCache = new ConcurrentHashMap<>();
 
   private AtomicInteger computeIfAbsent(MetricName metricName) {
     return cache.computeIfAbsent(metricName, key -> new AtomicInteger());
@@ -86,11 +90,30 @@ public class SampleApp extends Application<Configuration> {
         customTags(new HashMap<String, String>() {{
           put("location", "SF");
           put("env", "Staging");
-        }}).build()).build());
+        }}).build()).withTracer(new WavefrontTracer.Builder().withReporter(new Reporter() {
+      @Override
+      public void report(WavefrontSpan span) {
+        spanCache.putIfAbsent(span.getOperationName(), span);
+      }
+
+      @Override
+      public int getFailureCount() {
+        return 0;
+      }
+
+      @Override
+      public void close() {
+        // no-op
+      }
+    }).build()).build());
   }
 
   public int reportedValue(MetricName metricName) {
     return computeIfAbsent(metricName).get();
+  }
+
+  public WavefrontSpan reportedSpan(String operationName) {
+    return spanCache.get(operationName);
   }
 
   @Path("/sample/foo")
@@ -117,7 +140,6 @@ public class SampleApp extends Application<Configuration> {
     @GET
     @Path("/bar")
     public String getAll() {
-      System.out.println("Inside getAll()");
       return "don't care";
     }
 

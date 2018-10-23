@@ -1,6 +1,8 @@
 package com.wavefront.sdk.jersey;
 
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
+import com.wavefront.opentracing.WavefrontSpan;
+import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.jersey.app.SampleApp;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -17,9 +19,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class to test reported metric/histogram for Dropwizard (Jersey) apps requests/responses
@@ -105,6 +111,21 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar.POST.204.latency", tags)));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.cpu_ns", tags)));
+
+    // Tracing Span
+    WavefrontSpan span = sampleApp.reportedSpan("barCreate");
+    assertNotNull(span);
+    List<Pair<String, String>> expectedTags = new ArrayList<>();
+    expectedTags.add(new Pair<>("span.kind", "server"));
+    expectedTags.add(new Pair<>("component", "jersey-server"));
+    expectedTags.add(new Pair<>("http.method", "POST"));
+    expectedTags.add(new Pair<>("http.url",
+            "http://localhost:" + sampleApp.getHttpPort() + "/sample/foo/bar"));
+    expectedTags.add(new Pair<>("http.status_code", "204"));
+    expectedTags.add(new Pair<>("jersey.resource.class",
+            "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
+    expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar"));
+    assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
   private void testRead() throws IOException {
@@ -166,6 +187,21 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar._id_.GET.200.latency", tags)));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.cpu_ns", tags)));
+
+    // Tracing Span
+    WavefrontSpan span = sampleApp.reportedSpan("barGet");
+    assertNotNull(span);
+    List<Pair<String, String>> expectedTags = new ArrayList<>();
+    expectedTags.add(new Pair<>("span.kind", "server"));
+    expectedTags.add(new Pair<>("component", "jersey-server"));
+    expectedTags.add(new Pair<>("http.method", "GET"));
+    expectedTags.add(new Pair<>("http.url",
+            "http://localhost:" + sampleApp.getHttpPort() + "/sample/foo/bar/123"));
+    expectedTags.add(new Pair<>("http.status_code", "200"));
+    expectedTags.add(new Pair<>("jersey.resource.class",
+            "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
+    expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar/{id}"));
+    assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
   private void testUpdate() throws IOException {
@@ -227,6 +263,21 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar._id_.PUT.204.latency", tags)));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.cpu_ns", tags)));
+
+    // Tracing Span
+    WavefrontSpan span = sampleApp.reportedSpan("barUpdate");
+    assertNotNull(span);
+    List<Pair<String, String>> expectedTags = new ArrayList<>();
+    expectedTags.add(new Pair<>("span.kind", "server"));
+    expectedTags.add(new Pair<>("component", "jersey-server"));
+    expectedTags.add(new Pair<>("http.method", "PUT"));
+    expectedTags.add(new Pair<>("http.url",
+            "http://localhost:" + sampleApp.getHttpPort() + "/sample/foo/bar/123"));
+    expectedTags.add(new Pair<>("http.status_code", "204"));
+    expectedTags.add(new Pair<>("jersey.resource.class",
+            "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
+    expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar/{id}"));
+    assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
   private void testDelete() throws IOException {
@@ -288,6 +339,21 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar._id_.DELETE.204.latency", tags)));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.cpu_ns", tags)));
+
+    // Tracing Span
+    WavefrontSpan span = sampleApp.reportedSpan("barDelete");
+    assertNotNull(span);
+    List<Pair<String, String>> expectedTags = new ArrayList<>();
+    expectedTags.add(new Pair<>("span.kind", "server"));
+    expectedTags.add(new Pair<>("component", "jersey-server"));
+    expectedTags.add(new Pair<>("http.method", "DELETE"));
+    expectedTags.add(new Pair<>("http.url",
+            "http://localhost:" + sampleApp.getHttpPort() + "/sample/foo/bar/123"));
+    expectedTags.add(new Pair<>("http.status_code", "204"));
+    expectedTags.add(new Pair<>("jersey.resource.class",
+            "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
+    expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar/{id}"));
+    assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
   private void testGetAll() throws IOException {
@@ -348,6 +414,21 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar.GET.200.latency", tags)));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.cpu_ns", tags)));
+
+    // Tracing Span
+    WavefrontSpan span = sampleApp.reportedSpan("getAll");
+    assertNotNull(span);
+    List<Pair<String, String>> expectedTags = new ArrayList<>();
+    expectedTags.add(new Pair<>("span.kind", "server"));
+    expectedTags.add(new Pair<>("component", "jersey-server"));
+    expectedTags.add(new Pair<>("http.method", "GET"));
+    expectedTags.add(new Pair<>("http.url",
+            "http://localhost:" + sampleApp.getHttpPort() + "/sample/foo/bar"));
+    expectedTags.add(new Pair<>("http.status_code", "200"));
+    expectedTags.add(new Pair<>("jersey.resource.class",
+            "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
+    expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar"));
+    assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
   private int invokePostRequest(String pathSegments) throws IOException {
