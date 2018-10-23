@@ -57,12 +57,12 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ThreadLocal<Long> startTime = new ThreadLocal<>();
   private final ThreadLocal<Long> startTimeCpuNanos = new ThreadLocal<>();
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
-  private final String PROPERTY_NAME = "io.opentracing.contrib.jaxrs2.internal.SpanWrapper.activeSpanWrapper";
+  private final String PROPERTY_NAME = "com.wavefront.sdk.jersey.internal.SpanWrapper.activeSpanWrapper";
   @Nullable
   private final Tracer tracer;
 
   private WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags,
-                               @Nullable Tracer tracer) {
+                                @Nullable Tracer tracer) {
     Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfJerseyReporter = wfJerseyReporter;
@@ -99,12 +99,12 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       ContainerRequest request = (ContainerRequest) containerRequestContext;
       startTime.set(System.currentTimeMillis());
       startTimeCpuNanos.set(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime());
-      Optional<Pair<String, String>> optional = MetricNameUtils.metricName(request);
-      if (!optional.isPresent()) {
+      Optional<Pair<String, String>> optionalPair = MetricNameUtils.metricNameAndPath(request);
+      if (!optionalPair.isPresent()) {
         return;
       }
-      String requestMetricKey = optional.get()._1;
-      String finalMatchingPath = optional.get()._2;
+      String requestMetricKey = optionalPair.get()._1;
+      String finalMatchingPath = optionalPair.get()._2;
       ExtendedUriInfo uriInfo = request.getUriInfo();
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
@@ -145,15 +145,17 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   public void filter(ContainerRequestContext containerRequestContext,
                      ContainerResponseContext containerResponseContext)
       throws IOException {
-    try {
-      Scope scope = (Scope) containerRequestContext.getProperty(PROPERTY_NAME);
-      if (scope != null) {
-        decorateResponse(containerResponseContext, scope.span());
-        scope.close();
-        scope.span().finish();
+    if (tracer != null) {
+      try {
+        Scope scope = (Scope) containerRequestContext.getProperty(PROPERTY_NAME);
+        if (scope != null) {
+          decorateResponse(containerResponseContext, scope.span());
+          scope.close();
+          scope.span().finish();
+        }
+      } catch (ClassCastException ex) {
+        // no valid scope found
       }
-    } catch (ClassCastException ex) {
-      // no valid scope found
     }
     if (containerRequestContext instanceof ContainerRequest) {
       ContainerRequest request = (ContainerRequest) containerRequestContext;
@@ -163,16 +165,16 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
-      Optional<Pair<String, String>> requestOptional = MetricNameUtils.metricName(request);
-      if (!requestOptional.isPresent()) {
+      Optional<Pair<String, String>> requestOptionalPair = MetricNameUtils.metricNameAndPath(request);
+      if (!requestOptionalPair.isPresent()) {
         return;
       }
-      String requestMetricKey = requestOptional.get()._1;
-      Optional<String> responseOptional = MetricNameUtils.metricName(request, containerResponseContext);
-      if (!responseOptional.isPresent()) {
+      String requestMetricKey = requestOptionalPair.get()._1;
+      Optional<String> responseOptionalPair = MetricNameUtils.metricName(request, containerResponseContext);
+      if (!responseOptionalPair.isPresent()) {
         return;
       }
-      String responseMetricKey = responseOptional.get();
+      String responseMetricKey = responseOptionalPair.get();
 
       /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
@@ -419,7 +421,9 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
   private void decorateResponse(ContainerResponseContext responseContext, Span span) {
     Tags.HTTP_STATUS.set(span, responseContext.getStatus());
-    Tags.ERROR.set(span, isErrorStatusCode(responseContext));
+    if (isErrorStatusCode(responseContext)) {
+      Tags.ERROR.set(span, true);
+    }
   }
 
   private boolean isErrorStatusCode(ContainerResponseContext containerResponseContext) {

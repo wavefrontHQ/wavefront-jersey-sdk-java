@@ -24,8 +24,8 @@ abstract class MetricNameUtils {
    * @param request jersey container request.
    * @return generated metric name from the jersey container request.
    */
-  static Optional<Pair<String, String>> metricName(ContainerRequest request) {
-    return metricName(request, REQUEST_PREFIX);
+  static Optional<Pair<String, String>> metricNameAndPath(ContainerRequest request) {
+    return metricNameAndPath(request, REQUEST_PREFIX);
   }
 
   /**
@@ -37,11 +37,11 @@ abstract class MetricNameUtils {
    */
   static Optional<String> metricName(ContainerRequest request,
                                      ContainerResponseContext response) {
-    Optional<Pair<String, String>> optionalMetricName = metricName(request, RESPONSE_PREFIX);
+    Optional<Pair<String, String>> optionalMetricName = metricNameAndPath(request, RESPONSE_PREFIX);
     return optionalMetricName.map(metricName -> metricName._1 + "." + response.getStatus());
   }
 
-  private static Optional<Pair<String, String>> metricName(ContainerRequest request, String prefix) {
+  private static Optional<Pair<String, String>> metricNameAndPath(ContainerRequest request, String prefix) {
     Resource matchedResource = request.getUriInfo().getMatchedModelResource();
     if (matchedResource != null) {
       StringBuilder matchingPath = new StringBuilder(stripLeadingAndTrailingSlashes(

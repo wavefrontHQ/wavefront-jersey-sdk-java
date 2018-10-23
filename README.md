@@ -66,6 +66,9 @@ to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 **Note:** If you are using more than one Wavefront SDK (i.e. wavefront-opentracing-sdk-java, wavefront-dropwizard-metrics-sdk-java, wavefront-jersey-sdk-java, wavefront-grpc-sdk-java etc.) that requires you to instantiate WavefrontSender, then you should instantiate the WavefrontSender only once and share that sender instance across multiple SDKs inside the same JVM.
 If the SDKs will be installed on different JVMs, then you would need to instantiate one WavefrontSender per JVM.
 
+### WavefrontTracer
+To enable sending tracing spans from the SDK, we need to instantiate a WavefrontTracer. Refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
+
 ### WavefrontJerseyReporter
 ```java
 
@@ -87,8 +90,12 @@ If the SDKs will be installed on different JVMs, then you would need to instanti
 ```java
     /* Now create a Wavefront Jersey Filter which you can add to your 
     * Jersey based (Dropwizard, Springboot etc.) application  */
-    WavefrontJerseyFilter wfJerseyFilter = new WavefrontJerseyFilter(wfJerseyReporter, 
-        applicationTags);
+    WavefrontJerseyFilter wfJerseyFilter = new WavefrontJerseyFilter.Builder(
+        wfJerseyReporter, applicationTags).build();
+    
+    /* If you want to send tracing data and have WavefrontTracer configured */
+    WavefrontJerseyFilter wfJerseyFilter = new WavefrontJerseyFilter.Builder(
+        wfJerseyReporter, applicationTags).withTracer(tracer).build();
 ```
 
 ### Starting and stopping the reporter
@@ -164,4 +171,29 @@ This includes all the completed requests that resulted in an error response (tha
 |jersey.server.response.errors.aggregated_per_service.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|Inventory|n/a|
 |jersey.server.response.errors.aggregated_per_cluster.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|n/a|n/a|
 |jersey.server.response.errors.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
+
+### Tracing Spans
+
+Every span will have start time in millisec along with duration in millisec. The following table includes all the attributes of generated tracing span.  
+
+| Span Tag Key          | Span Tag Value                         |
+| --------------------- | -------------------------------------- |
+| traceId               | 4a3dc181-d4ac-44bc-848b-133bb3811c31   |
+| parent                | q908ddfe-4723-40a6-b1d3-1e85b60d9016   |
+| followsFrom           | b768ddfe-4723-40a6-b1d3-1e85b60d9016   |
+| spanId                | c908ddfe-4723-40a6-b1d3-1e85b60d9016   |
+| component             | jersey-server                          |
+| span.kind             | server                                 |
+| application           | OrderingApp                            |
+| service               | inventory                              |
+| cluster               | us-west-2                              |
+| shard                 | secondary                              |
+| location              | Oregon (*custom tag)                   |
+| env                   | Staging (*custom tag)                  |
+| http.method           | GET                                    |
+| http.url              | http://{SERVER_ADDR}/orders/fulfilled  |
+| http.status_code      | 502                                    |
+| error                 | True                                   |
+| jersey.path           | "/orders/fulfilled"                    |
+| jersey.resource.class | com.sample.ordering.InventryController |
 
