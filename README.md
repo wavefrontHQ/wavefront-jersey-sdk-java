@@ -83,7 +83,9 @@ The `applicationTags` here is instantiated as described above. The `reporter` he
     /* Set the source for your metrics and histograms */
     builder.withSource("mySource");
 
-    /* Optionally change the reporting frequency to 30 seconds, defaults to 1 min */
+    /* The reporting interval controls how often data is reported to the WavefrontSender, 
+     * and therefore determines the timestamps on the data sent to Wavefront. 
+     * Optionally change the reporting frequency to 30 seconds, defaults to 1 min */
     builder.reportingIntervalSeconds(30);
 
     /* Create a WavefrontJerseyReporter using ApplicationTags metadata and WavefronSender */
