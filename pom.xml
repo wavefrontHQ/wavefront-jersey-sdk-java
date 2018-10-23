@@ -47,45 +47,10 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>junit:junit</exclude>
-                                </excludes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <excludes>
-                                        <exclude>META-INF/license/**</exclude>
-                                        <exclude>license/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>com.wavefront</groupId>
-            <artifactId>wavefront-sdk-java</artifactId>
-            <!-- TODO see if you can avoid this dependency altogether and rely on transitive dependency via tier 2 -->
-            <version>0.9.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>com.wavefront</groupId>
             <artifactId>wavefront-internal-reporter-java</artifactId>
