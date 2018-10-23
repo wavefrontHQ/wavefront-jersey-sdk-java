@@ -67,7 +67,12 @@ to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 If the SDKs will be installed on different JVMs, then you would need to instantiate one WavefrontSender per JVM.
 
 ### WavefrontTracer
-To enable sending tracing spans from the SDK, we need to instantiate a WavefrontTracer. Refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
+To enable sending tracing spans from the SDK, we need to instantiate a WavefrontTracer first as follows. 
+```java
+    Tracer tracer = new WavefrontTracer.Builder().withReporter(reporter).
+        withApplicationTags(applicationTags).build();
+```
+The `applicationTags` here is initiated as described above. The `reporter` here can be any kind of `WavefrontSpanReporter`, refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
 
 ### WavefrontJerseyReporter
 ```java
@@ -88,14 +93,17 @@ To enable sending tracing spans from the SDK, we need to instantiate a Wavefront
 
 ### Construct WavefrontJerseyFilter
 ```java
-    /* Now create a Wavefront Jersey Filter which you can add to your 
-    * Jersey based (Dropwizard, Springboot etc.) application  */
-    WavefrontJerseyFilter wfJerseyFilter = new WavefrontJerseyFilter.Builder(
-        wfJerseyReporter, applicationTags).build();
+    /* Using WavefrontJerseyReporter and ApplicationTags to create a 
+    * Wavefront Jersey Filter Builder */
+    WavefrontJerseyFilter.Builder wfJerseyFilterBuilder = new WavefrontJerseyFilter.
+        Builder(wfJerseyReporter, applicationTags);
     
     /* If you want to send tracing data and have WavefrontTracer configured */
-    WavefrontJerseyFilter wfJerseyFilter = new WavefrontJerseyFilter.Builder(
-        wfJerseyReporter, applicationTags).withTracer(tracer).build();
+    wfJerseyFilterBuilder.withTracer(tracer);
+    
+    /* Now create a Wavefront Jersey Filter which you can add to your 
+    * Jersey based (Dropwizard, Springboot etc.) application  */
+    WavefrontJerseyFilter wfJerseyFilter = wfJerseyFilterBuilder.build()
 ```
 
 ### Starting and stopping the reporter
@@ -111,12 +119,12 @@ To enable sending tracing spans from the SDK, we need to instantiate a Wavefront
 Let's say your have a RESTful HTTP GET API that returns all the fulfilled orders. Let's assume this API is defined in inventory service for your Ordering application.
 Below is the API handler for the HTTP GET method.
 ```java
-@ApiOperation(value = "Get all the fulfilled orders")
-@GET
-@Path("/orders/fulfilled")
-public List<Order> getAllFulfilledOrders() {
-   ...
-}
+    @ApiOperation(value = "Get all the fulfilled orders")
+    @GET
+    @Path("/orders/fulfilled")
+    public List<Order> getAllFulfilledOrders() {
+       ...
+    }
 ```
 
 Let's assume this HTTP handler is 
@@ -195,5 +203,5 @@ Every span will have start time in millisec along with duration in millisec. The
 | http.status_code      | 502                                    |
 | error                 | True                                   |
 | jersey.path           | "/orders/fulfilled"                    |
-| jersey.resource.class | com.sample.ordering.InventryController |
+| jersey.resource.class | com.sample.ordering.InventoryController |
 
