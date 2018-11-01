@@ -1,6 +1,6 @@
 # Wavefront Jersey SDK
 
-This SDK provides support for reporting out of the box metrics and histograms from your Jersey based microservices application. That data is reported to Wavefront via proxy or direct ingestion. That data will help you understand how your application is performing in production.
+This SDK provides support for reporting out of the box metrics, histograms and traces from your Jersey based microservices application. That data is reported to Wavefront via proxy or direct ingestion. That data will help you understand how your application is performing in production.
 
 ## Usage
 If you are using Maven, add following maven dependency to your pom.xml
@@ -14,7 +14,7 @@ If you are using Maven, add following maven dependency to your pom.xml
 
 ## Jersey Filter
 We will be gathering http request/response metrics and histograms using Jersey filter.
-See https://jersey.github.io/documentation/latest/filters-and-interceptors.html for more details on Jersey Filter. Wavefront has defined its own Jersey filter and the below steps will help you instantiate WavefrontJerseyFilter which you can use in your Jersey application.
+See https://jersey.github.io/documentation/latest/filters-and-interceptors.html for more details on Jersey Filter. Wavefront has defined its own Jersey filter and the below steps will help you instantiate WavefrontJerseyFilter which you can use in your Jersey application. In order to instantiate WavefrontJerseyFilter, you first need to instantiate ApplicationTags, WavefrontJerseyReporter and WavefrontTracer.
 
 ### Application Tags
 Before you configure the SDK you need to decide the metadata that you wish to emit for those out of the box metrics and histograms. Each and every application should have the application tag defined. If the name of your application is Ordering application, then you can put that as the value for that tag.
@@ -66,14 +66,6 @@ to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 **Note:** If you are using more than one Wavefront SDK (i.e. wavefront-opentracing-sdk-java, wavefront-dropwizard-metrics-sdk-java, wavefront-jersey-sdk-java, wavefront-grpc-sdk-java etc.) that requires you to instantiate WavefrontSender, then you should instantiate the WavefrontSender only once and share that sender instance across multiple SDKs inside the same JVM.
 If the SDKs will be installed on different JVMs, then you would need to instantiate one WavefrontSender per JVM.
 
-### WavefrontTracer
-To enable sending tracing spans from the SDK, we need to instantiate a WavefrontTracer first as follows. 
-```java
-    Tracer tracer = new WavefrontTracer.Builder().withReporter(reporter).
-        withApplicationTags(applicationTags).build();
-```
-The `applicationTags` here is instantiated as described above. The `reporter` here can be any kind of `WavefrontSpanReporter`, refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
-
 ### WavefrontJerseyReporter
 ```java
 
@@ -92,6 +84,14 @@ The `applicationTags` here is instantiated as described above. The `reporter` he
     WavefrontJerseyReporter wfJerseyReporter = new WavefrontJerseyReporter.
         Builder(applicationTags).build(wavefrontSender);
 ```
+
+### WavefrontTracer
+You can optionally configure tracing with this SDK if you wish to send traces from your application to Wavefront.
+To enable sending traces from the SDK, we need to instantiate a WavefrontTracer first as follows. 
+```java
+    Tracer tracer = new WavefrontTracer.Builder().withApplicationTags(applicationTags).build(wavefrontSpanReporter);
+```
+The concept of `applicationTags` is described above. In order to correctly instantiate WavefrontSpanReporter, please refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#wavefrontspanreporter) for more details. 
 
 ### Construct WavefrontJerseyFilter
 ```java
