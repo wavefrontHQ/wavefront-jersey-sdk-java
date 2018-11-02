@@ -25,50 +25,17 @@ The steps to create a `WavefrontJerseyFilter` are:
 The sections below detail each of the above steps.
 
 ### 1. Application Tags
-The application tags determine the metadata (aka point/span tags) that are included with the metrics/histograms/traces reported to Wavefront.
+ApplicationTags determine the metadata (aka point/span tags) that are included with every metrics/histograms/spans reported to Wavefront.
 
-The following tags are mandatory:
-* `application`: The name of your Jersey based application, for example: `OrderingApp`.
-* `service`: The name of the microservice within your application, for example: `inventory`.
-
-The following tags are optional:
-* `cluster`: For example: `us-west-2`.
-* `shard`: The shard (aka mirror), for example: `secondary`.
-
-You can also optionally add custom tags specific to your application in the form of a `HashMap` (see example below).
-
-To create the application tags:
-```java
-String application = "OrderingApp";
-String service = "inventory";
-String cluster = "us-west-2";
-String shard = "secondary";
-
-Map<String, String> customTags = new HashMap<String, String>() {{
-  put("location", "Oregon");
-  put("env", "Staging");
-}};
-
-ApplicationTags applicationTags = new ApplicationTags.Builder(application, service).
-    cluster(cluster).       // optional
-    shard(shard).           // optional
-    customTags(customTags). // optional
-    build();
-```
-
-You would typically define the above metadata in your application's YAML config file and create the `ApplicationTags`.
+See the [documentation](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/apptags.md) for details on instantiating ApplicationTags.
 
 ### 2. WavefrontSender
 
-Both the `WavefrontJerseyReporter` and the `WavefrontTracer` require a WavefrontSender: A low-level interface that knows how to send data to Wavefront. There are two implementations of the Wavefront sender:
+Both the `WavefrontJerseyReporter` and the `WavefrontTracer` require a WavefrontSender: A low-level interface that knows how to send data to Wavefront. See the [Wavefront sender documentation](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/README.md#set-up-a-wavefrontsender) for details on instantiating a proxy or direct ingestion client.
 
-* WavefrontProxyClient: To send data to the Wavefront proxy
-* WavefrontDirectIngestionClient: To send data to Wavefront using direct ingestion
+**Note:** See this [documentation](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/sender.md) on sharing a single WavefrontSender instance across multiple SDKs.
 
-See the [Wavefront sender documentation](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/README.md#wavefrontsender) for details on instantiating a proxy or direct ingestion client.
-
-**Note:** When using more than one Wavefront SDK (i.e. wavefront-opentracing-sdk-java, wavefront-dropwizard-metrics-sdk-java, wavefront-jersey-sdk-java, wavefront-grpc-sdk-java etc.), then you should instantiate the WavefrontSender only once within the same JVM process.
-If the SDKs are used on different JVM processes, then you should instantiate one WavefrontSender per JVM.
+Once you have a Wavefront sender, create the WavefrontJerseyReporter and optionally the WavefrontTracer.
 
 ### 3. WavefrontJerseyReporter
 To create the `WavefrontJerseyReporter`:
