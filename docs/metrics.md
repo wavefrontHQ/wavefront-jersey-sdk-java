@@ -1,7 +1,7 @@
-## Out of the box metrics and histograms for your Jersey based application.
+# Metrics, Histograms and Trace Spans provided by this SDK
 
-Let's say your have a RESTful HTTP GET API that returns all the fulfilled orders. Let's assume this API is defined in inventory service for your Ordering application.
-Below is the API handler for the HTTP GET method.
+Let's consider a RESTful HTTP GET API that returns all the fulfilled orders with the API handler below:
+
 ```java
     @ApiOperation(value = "Get all the fulfilled orders")
     @GET
@@ -11,23 +11,23 @@ Below is the API handler for the HTTP GET method.
     }
 ```
 
-Let's assume this HTTP handler is
-1) part of 'Ordering' application
-2) running inside 'Inventory' microservice
-3) deployed in 'us-west-1' cluster
-4) serviced by 'primary' shard
-5) on source = host-1
-6) this API returns HTTP 200 status code
+Assume the API handler is:
+1. Part of an **Ordering** application
+2. Defined within an **Inventory** microservice
+3. Deployed in the **us-west-1** cluster
+4. Serviced by the **primary** shard/mirror
+5. On source **host-1**
+6. And the API call returns a HTTP 200 status code
 
-When this API is invoked following entities (i.e. metrics and histograms) are reported directly from your application to Wavefront.
+The following metrics, histograms and spans are reported to Wavefront when this API is invoked:
 
-### Request Gauges
+## Request Gauges
 |Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
 | ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|-----:|-----:|
 |jersey.server.request.inventory.orders.fulfilled.GET.inflight|Gauge|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 |jersey.server.total_requests.inflight|Gauge|host-1|Ordering|us-west-1|Inventory|primary|n/a|n/a|
 
-### Granular Response related metrics
+## Granular Response Metrics
 |Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
 | ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|-----:|-----:|
 |jersey.server.response.inventory.orders.fulfilled.GET.200.cumulative.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
@@ -36,13 +36,13 @@ When this API is invoked following entities (i.e. metrics and histograms) are re
 |jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_cluster.count|DeltaCounter|wavefront-provided|Ordering|us-west-1|n/a|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 |jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_appliation.count|DeltaCounter|wavefront-provided|Ordering|n/a|n/a|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 
-### Granular Response related histograms
+## Granular Response Histograms
 |Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
 | ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|-----:|-----:|
 |jersey.server.response.inventory.orders.fulfilled.GET.200.latency|WavefrontHistogram|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 |jersey.server.response.inventory.orders.fulfilled.GET.200.cpu_ns|WavefrontHistogram|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 
-### Overall Response related metrics
+## Completed Response Metrics
 This includes all the completed requests that returned a response (i.e. success + errors).
 
 |Entity Name| Entity Type|source|application|cluster|service|shard|
@@ -53,7 +53,7 @@ This includes all the completed requests that returned a response (i.e. success 
 |jersey.server.response.completed.aggregated_per_cluster.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|n/a|n/a|
 |jersey.server.response.completed.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
 
-### Overall Error Response related metrics
+## Error Response Metrics
 This includes all the completed requests that resulted in an error response (that is HTTP status code of 4xx or 5xx).
 
 |Entity Name| Entity Type|source|application|cluster|service|shard|
@@ -64,9 +64,9 @@ This includes all the completed requests that resulted in an error response (tha
 |jersey.server.response.errors.aggregated_per_cluster.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|n/a|n/a|
 |jersey.server.response.errors.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
 
-### Tracing Spans
+## Tracing Spans
 
-Every span will have the operation name as span name, start time in millisec along with duration in millisec. The following table includes all the rest attributes of generated tracing spans.  
+Every span will have the operation name as span name and a start time and duration in milliseconds. Additionally the following attributes are included in the generated tracing spans:
 
 | Span Tag Key          | Span Tag Value                         |
 | --------------------- | -------------------------------------- |
@@ -84,7 +84,7 @@ Every span will have the operation name as span name, start time in millisec alo
 | env                   | Staging (*custom tag)                  |
 | http.method           | GET                                    |
 | http.url              | http://{SERVER_ADDR}/orders/fulfilled  |
-| http.status_code      | 502                                    |
+| http.status_code      | 200                                    |
 | error                 | True                                   |
 | jersey.path           | "/orders/fulfilled"                    |
 | jersey.resource.class | com.sample.ordering.InventoryController |
