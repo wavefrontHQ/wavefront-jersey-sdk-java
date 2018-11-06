@@ -51,11 +51,16 @@ public class SampleApp extends Application<Configuration> {
     adminConnectorFactory.setPort(0);
     defaultHttp.setApplicationConnectors(Lists.newArrayList(appConnectorFactory));
     defaultHttp.setAdminConnectors(Lists.newArrayList(adminConnectorFactory));
+    ApplicationTags applicationTags = new ApplicationTags.Builder(APPLICATION, SERVICE).cluster(CLUSTER).shard(SHARD).
+            customTags(new HashMap<String, String>() {{
+              put("location", "SF");
+              put("env", "Staging");
+            }}).build();
     environment.lifecycle().addServerLifecycleListener(server -> {
       httpPort = ((ServerConnector) server.getConnectors()[0]).getLocalPort();
     });
     environment.jersey().register(new SampleResource());
-    environment.getApplicationContext().setContextPath("/sample");
+    environment.getApplicationContext().setContextPath("/");
     environment.jersey().register(new WavefrontJerseyFilter.Builder(new SdkReporter() {
       @Override
       public void incrementCounter(MetricName metricName) {
@@ -86,11 +91,7 @@ public class SampleApp extends Application<Configuration> {
       public void stop() {
         // no-op
       }
-    }, new ApplicationTags.Builder(APPLICATION, SERVICE).cluster(CLUSTER).shard(SHARD).
-        customTags(new HashMap<String, String>() {{
-          put("location", "SF");
-          put("env", "Staging");
-        }}).build()).withTracer(new WavefrontTracer.Builder().build(new Reporter() {
+    }, applicationTags).withTracer(new WavefrontTracer.Builder(new Reporter() {
       @Override
       public void report(WavefrontSpan span) {
         spanCache.putIfAbsent(span.getOperationName(), span);
@@ -105,7 +106,7 @@ public class SampleApp extends Application<Configuration> {
       public void close() {
         // no-op
       }
-    })).build());
+    }, applicationTags).build()).build());
   }
 
   public int reportedValue(MetricName metricName) {

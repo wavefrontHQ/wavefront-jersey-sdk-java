@@ -125,6 +125,12 @@ public class JerseyAppReporterTest {
     expectedTags.add(new Pair<>("jersey.resource.class",
             "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
     expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar"));
+    expectedTags.add(new Pair<>("application", "wavefront"));
+    expectedTags.add(new Pair<>("service", SampleApp.SERVICE));
+    expectedTags.add(new Pair<>("cluster", SampleApp.CLUSTER));
+    expectedTags.add(new Pair<>("shard", SampleApp.SHARD));
+    expectedTags.add(new Pair<>("location", "SF"));
+    expectedTags.add(new Pair<>("env", "Staging"));
     assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
@@ -201,6 +207,12 @@ public class JerseyAppReporterTest {
     expectedTags.add(new Pair<>("jersey.resource.class",
             "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
     expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar/{id}"));
+    expectedTags.add(new Pair<>("application", "wavefront"));
+    expectedTags.add(new Pair<>("service", SampleApp.SERVICE));
+    expectedTags.add(new Pair<>("cluster", SampleApp.CLUSTER));
+    expectedTags.add(new Pair<>("shard", SampleApp.SHARD));
+    expectedTags.add(new Pair<>("location", "SF"));
+    expectedTags.add(new Pair<>("env", "Staging"));
     assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
@@ -277,6 +289,12 @@ public class JerseyAppReporterTest {
     expectedTags.add(new Pair<>("jersey.resource.class",
             "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
     expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar/{id}"));
+    expectedTags.add(new Pair<>("application", "wavefront"));
+    expectedTags.add(new Pair<>("service", SampleApp.SERVICE));
+    expectedTags.add(new Pair<>("cluster", SampleApp.CLUSTER));
+    expectedTags.add(new Pair<>("shard", SampleApp.SHARD));
+    expectedTags.add(new Pair<>("location", "SF"));
+    expectedTags.add(new Pair<>("env", "Staging"));
     assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
@@ -353,6 +371,12 @@ public class JerseyAppReporterTest {
     expectedTags.add(new Pair<>("jersey.resource.class",
             "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
     expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar/{id}"));
+    expectedTags.add(new Pair<>("application", "wavefront"));
+    expectedTags.add(new Pair<>("service", SampleApp.SERVICE));
+    expectedTags.add(new Pair<>("cluster", SampleApp.CLUSTER));
+    expectedTags.add(new Pair<>("shard", SampleApp.SHARD));
+    expectedTags.add(new Pair<>("location", "SF"));
+    expectedTags.add(new Pair<>("env", "Staging"));
     assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
@@ -428,6 +452,12 @@ public class JerseyAppReporterTest {
     expectedTags.add(new Pair<>("jersey.resource.class",
             "com.wavefront.sdk.jersey.app.SampleApp.SampleResource"));
     expectedTags.add(new Pair<>("jersey.path", "sample/foo/bar"));
+    expectedTags.add(new Pair<>("application", "wavefront"));
+    expectedTags.add(new Pair<>("service", SampleApp.SERVICE));
+    expectedTags.add(new Pair<>("cluster", SampleApp.CLUSTER));
+    expectedTags.add(new Pair<>("shard", SampleApp.SHARD));
+    expectedTags.add(new Pair<>("location", "SF"));
+    expectedTags.add(new Pair<>("env", "Staging"));
     assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
