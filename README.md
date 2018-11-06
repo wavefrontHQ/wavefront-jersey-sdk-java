@@ -68,7 +68,7 @@ builder.withSource("mySource");
 builder.reportingIntervalSeconds(30);
 
 // Create a WavefrontJerseyReporter with a WavefronSender
-builder.build(wavefrontSender);
+WavefrontJerseyReporter wfJerseyReporter = builder.build(wavefrontSender);
 ```
 
 ### 4. WavefrontTracer (Optional)
