@@ -29,7 +29,7 @@ The steps for creating a `WavefrontJerseyFilter` are:
 For the details of each step, see the sections below.
 
 ### 1. Set Up Application Tags
-ApplicationTags determine the metadata (point tags and span tags) that are included with every metric/histogram/span reported to Wavefront. These tags enable you to filter and query the reported data in Wavefront.
+Application tags determine the metadata (point tags and span tags) that are included with every metric/histogram/span reported to Wavefront. These tags enable you to filter and query the reported data in Wavefront.
 
 You encapsulate application tags in an `ApplicationTags` object. See [Instantiating ApplicationTags](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/apptags.md) for details.
 
@@ -56,7 +56,7 @@ You can optionally specify:
 
 ```java
 
-ApplicationTags appTags = buildTags(); // pseudocode; see above
+ApplicationTags applicationTags = buildTags(); // pseudocode; see above
 
 // Create WavefrontJerseyReporter.Builder using applicationTags.
 WavefrontJerseyReporter.Builder builder = new WavefrontJerseyReporter.Builder(applicationTags);
@@ -80,7 +80,7 @@ To build a `WavefrontTracer`, you must specify:
   **Note:** When you create the `WavefrontSpanReporter`, you should instantiate it with the same source name and `WavefrontSender` that you used to create the `WavefrontJerseyReporter` (see above).
 
 ```java
-ApplicationTags appTags = buildTags(); // pseudocode; see above
+ApplicationTags applicationTags = buildTags(); // pseudocode; see above
 Reporter wavefrontSpanReporter = buildSpanReporter(); // pseudocode
 Tracer tracer = new WavefrontTracer.Builder(wavefrontSpanReporter, applicationTags).build();
 ```
