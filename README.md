@@ -1,9 +1,12 @@
 # Wavefront Jersey SDK
 
-This SDK provides support for reporting out of the box metrics and histograms from your Jersey based microservices application. That data is reported to Wavefront via proxy or direct ingestion. That data will help you understand how your application is performing in production.
+The Wavefront for VMware Jersey SDK for Java is a library that collects out-of-the-box metrics, histograms and (optionally) traces from your Jersey-based microservices application, and reports the data to Wavefront. You can analyze the data in [Wavefront](https://www.wavefront.com) to better understand how your application is performing in production.
 
-## Usage
-If you are using Maven, add following maven dependency to your pom.xml
+You use this SDK for applications that use Jersey-compliant frameworks such as Dropwizard, Spring Boot, etc.
+
+
+## Maven
+If you are using Maven, add the following maven dependency to your pom.xml:
 ```
 <dependency>
     <groupId>com.wavefront</groupId>
@@ -12,198 +15,117 @@ If you are using Maven, add following maven dependency to your pom.xml
 </dependency>
 ```
 
-## Jersey Filter
-We will be gathering http request/response metrics and histograms using Jersey filter.
-See https://jersey.github.io/documentation/latest/filters-and-interceptors.html for more details on Jersey Filter. Wavefront has defined its own Jersey filter and the below steps will help you instantiate WavefrontJerseyFilter which you can use in your Jersey application.
+## Set Up a WavefrontJerseyFilter
+This SDK provides a `WavefrontJerseyFilter` for collecting HTTP request/response metrics and histograms. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work.
 
-### Application Tags
-Before you configure the SDK you need to decide the metadata that you wish to emit for those out of the box metrics and histograms. Each and every application should have the application tag defined. If the name of your application is Ordering application, then you can put that as the value for that tag.
-```java
-    /* Set the name of your Jersey based application that you wish to monitor */
-    String application = "OrderingApp";
-```
-Jersey based application is composed of microservices. Each and every microservice in your application should have the service tag defined.
-```java
-    /* Set the name of your service, 
-     * for instance - 'inventory' service for your OrderingApp */
-    String service = "inventory";
-```
+The steps for creating a `WavefrontJerseyFilter` are:
+1. Create an `ApplicationTags` instance, which specifies metadata about your application.
+2. Create a `WavefrontSender` for sending data to Wavefront.
+3. Create a `WavefrontJerseyReporter` for reporting Jersey metrics and histograms to Wavefront.
+4. Optionally create a `WavefrontTracer` for reporting trace data from Jersey APIs to Wavefront.
+5. Create a `WavefrontJerseyFilter`.
+6. Register the `WavefrontJerseyFilter`.
 
-You can also define optional tags (cluster and shard).
-```java
-    /* Optional cluster field, set it to 'us-west-2', assuming
-     * your app is running in 'us-west-2' cluster */
-    String cluster = "us-west-2";
+For the details of each step, see the sections below.
 
-    /* Optional shard field, set it to 'secondary', assuming your 
-     * application has 2 shards - primary and secondary */
-    String shard = "secondary";
-```
+### 1. Set Up Application Tags
+Application tags determine the metadata (point tags and span tags) that are included with every metric/histogram/span reported to Wavefront. These tags enable you to filter and query the reported data in Wavefront.
 
-You can add optional custom tags for your application.
-```java
-    /* Optional custom tags map */
-    Map<String, String> customTags = new HashMap<String, String>() {{
-      put("location", "Oregon");
-      put("env", "Staging");
-    }};
-```
-You can define the above metadata in your application YAML config file.
-Now create ApplicationTags instance using the above metatdata.
-```java
-    /* Create ApplicationTags instance using the above metadata */
-    ApplicationTags applicationTags = new ApplicationTags.Builder(application, service).
-        cluster(cluster).shard(shard).customTags(customTags).build();
-```
+You encapsulate application tags in an `ApplicationTags` object. See [Instantiating ApplicationTags](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/apptags.md) for details.
 
-### WavefrontSender
-We need to instantiate WavefrontSender 
-(i.e. either WavefrontProxyClient or WavefrontDirectIngestionClient)
-Refer to this page (https://github.com/wavefrontHQ/wavefront-sdk-java#wavefrontsender)
-to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
-<br />
-<br />
-**Note:** If you are using more than one Wavefront SDK (i.e. wavefront-opentracing-sdk-java, wavefront-dropwizard-metrics-sdk-java, wavefront-jersey-sdk-java, wavefront-grpc-sdk-java etc.) that requires you to instantiate WavefrontSender, then you should instantiate the WavefrontSender only once and share that sender instance across multiple SDKs inside the same JVM.
-If the SDKs will be installed on different JVMs, then you would need to instantiate one WavefrontSender per JVM.
+### 2. Set Up a WavefrontSender
 
-### WavefrontTracer
-To enable sending tracing spans from the SDK, we need to instantiate a WavefrontTracer first as follows. 
-```java
-    Tracer tracer = new WavefrontTracer.Builder().withReporter(reporter).
-        withApplicationTags(applicationTags).build();
-```
-The `applicationTags` here is instantiated as described above. The `reporter` here can be any kind of `WavefrontSpanReporter`, refer to this page (https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#tracer) for more details. 
+A `WavefrontSender` object implements the low-level interface for sending data to Wavefront. You can choose to send data to Wavefront using either the [Wavefront proxy](https://docs.wavefront.com/proxies.html) or [direct ingestion](https://docs.wavefront.com/direct_ingestion.html).
 
-### WavefrontJerseyReporter
+* See [Set Up a WavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/README.md#set-up-a-wavefrontsender) for details on instantiating a proxy or direct ingestion client.
+
+**Note:** If you are using multiple Wavefront Java SDKs, see [Sharing a WavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/sender.md) for information about sharing a single `WavefrontSender` instance across SDKs.
+
+The `WavefrontSender` is used by both the `WavefrontJerseyReporter` and the optional `WavefrontTracer`.
+
+### 3. Create a WavefrontJerseyReporter
+A `WavefrontJerseyReporter` object reports metrics and histograms to Wavefront.
+
+To build a `WavefrontJerseyReporter`, you must specify:
+* An `ApplicationTags` object (see above)
+* A `WavefrontSender` object (see above).
+
+You can optionally specify:
+* A nondefault source for the reported data. If you omit the source, the host name is automatically used.
+* A nondefault reporting interval, which controls how often data is reported to the WavefrontSender. The reporting interval determines the timestamps on the data sent to Wavefront. If you omit the reporting interval, data is reported once a minute.
+
 ```java
 
-    /* Create WavefrontJerseyReporter.Builder using applicationTags. */
-    WavefrontJerseyReporter.Builder builder = new WavefrontJerseyReporter.Builder(applicationTags);
+ApplicationTags applicationTags = buildTags(); // pseudocode; see above
 
-    /* Set the source for your metrics and histograms */
-    builder.withSource("mySource");
+// Create WavefrontJerseyReporter.Builder using applicationTags.
+WavefrontJerseyReporter.Builder builder = new WavefrontJerseyReporter.Builder(applicationTags);
 
-    /* The reporting interval controls how often data is reported to the WavefrontSender, 
-     * and therefore determines the timestamps on the data sent to Wavefront. 
-     * Optionally change the reporting frequency to 30 seconds, defaults to 1 min */
-    builder.reportingIntervalSeconds(30);
+// Optionally set a nondefault source name for your metrics and histograms. Omit this statement to use the host name.
+builder.withSource("mySource");
 
-    /* Create a WavefrontJerseyReporter using ApplicationTags metadata and WavefronSender */
-    WavefrontJerseyReporter wfJerseyReporter = new WavefrontJerseyReporter.
-        Builder(applicationTags).build(wavefrontSender);
+// Optionally change the reporting interval to 30 seconds. Default is 1 minute
+builder.reportingIntervalSeconds(30);
+
+// Create a WavefrontJerseyReporter with a WavefronSender
+WavefrontJerseyReporter wfJerseyReporter = builder.build(wavefrontSender);
 ```
 
-### Construct WavefrontJerseyFilter
+### 4. WavefrontTracer (Optional)
+You can optionally configure the `WavefrontTracer` to create and send trace data from your Jersey application to Wavefront.
+
+To build a `WavefrontTracer`, you must specify:
+* The `ApplicationTags` object (see above).
+* A `WavefrontSpanReporter` for reporting trace data to Wavefront. See [Create a WavefrontSpanReporter](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#create-a-wavefrontspanreporter) for details.
+  **Note:** When you create the `WavefrontSpanReporter`, you should instantiate it with the same source name and `WavefrontSender` that you used to create the `WavefrontJerseyReporter` (see above).
+
 ```java
-    /* Using WavefrontJerseyReporter and ApplicationTags to create a 
-    * Wavefront Jersey Filter Builder */
-    WavefrontJerseyFilter.Builder wfJerseyFilterBuilder = new WavefrontJerseyFilter.
-        Builder(wfJerseyReporter, applicationTags);
-    
-    /* If you want to send tracing data and have WavefrontTracer configured */
-    wfJerseyFilterBuilder.withTracer(tracer);
-    
-    /* Now create a Wavefront Jersey Filter which you can add to your 
-    * Jersey based (Dropwizard, Springboot etc.) application  */
-    WavefrontJerseyFilter wfJerseyFilter = wfJerseyFilterBuilder.build()
+ApplicationTags applicationTags = buildTags(); // pseudocode; see above
+Reporter wavefrontSpanReporter = buildSpanReporter(); // pseudocode
+Tracer tracer = new WavefrontTracer.Builder(wavefrontSpanReporter, applicationTags).build();
 ```
 
-### Starting and stopping the reporter
+### 5. Create WavefrontJerseyFilter
+To build the `WavefrontJerseyFilter`:
+
 ```java
-    /* Once the reporter and filter is instantiated, start the reporter */
-    wfJerseyReporter.start();
+// Use the WavefrontJerseyReporter and ApplicationTags to create a builder
+WavefrontJerseyFilter.Builder wfJerseyFilterBuilder =
+  new WavefrontJerseyFilter.Builder(wfJerseyReporter, applicationTags);
 
-    /* Before shutting down your Jersey application, stop your reporter */
-    wfJerseyReporter.stop();
+// Set the tracer to optionally send tracing data
+wfJerseyFilterBuilder.withTracer(tracer);
+
+// Create the WavefrontJerseyFilter
+WavefrontJerseyFilter wfJerseyFilter = wfJerseyFilterBuilder.build();
 ```
 
-## Out of the box metrics and histograms for your Jersey based application.
-Let's say your have a RESTful HTTP GET API that returns all the fulfilled orders. Let's assume this API is defined in inventory service for your Ordering application.
-Below is the API handler for the HTTP GET method.
+
+### 6. Register the WavefrontJerseyFilter
+After you create the WavefrontJerseyFilter, you must register it. How you do this varies based on the framework you use:
+
+* See [dropwizard.md](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/dropwizard.md) for registering in a dropwizard based application.
+* See [springboot.md](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/springboot.md) for registering in a springboot based application.
+
+## Start the Jersey Reporter
+After you instantiate the `WavefrontJerseyReporter` and `WaveFrontJerseyFilter`, you must explicitly start the Jersey reporter.
+
 ```java
-    @ApiOperation(value = "Get all the fulfilled orders")
-    @GET
-    @Path("/orders/fulfilled")
-    public List<Order> getAllFulfilledOrders() {
-       ...
-    }
+// Start the reporter
+wfJerseyReporter.start();
 ```
 
-Let's assume this HTTP handler is 
-1) part of 'Ordering' application 
-2) running inside 'Inventory' microservice 
-3) deployed in 'us-west-1' cluster 
-4) serviced by 'primary' shard 
-5) on source = host-1 
-6) this API returns HTTP 200 status code
+## Stop the Jersey Reporter
 
-When this API is invoked following entities (i.e. metrics and histograms) are reported directly from your application to Wavefront.
+Before you shut down your Jersey application, you must explicitly stop the Jersy reporter.
+```java
+// Stop the reporter
+wfJerseyReporter.stop();
+```
 
-### Request Gauges
-|Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
-| ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|-----:|-----:|
-|jersey.server.request.inventory.orders.fulfilled.GET.inflight|Gauge|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-|jersey.server.total_requests.inflight|Gauge|host-1|Ordering|us-west-1|Inventory|primary|n/a|n/a|
+## Metrics and Histograms Sent From Jersey Operations
 
-### Granular Response related metrics
-|Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
-| ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|-----:|-----:|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.cumulative.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_shard.count|DeltaCounter|wavefront-provided|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_service.count|DeltaCounter|wavefront-provided|Ordering|us-west-1|Inventory|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_cluster.count|DeltaCounter|wavefront-provided|Ordering|us-west-1|n/a|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_appliation.count|DeltaCounter|wavefront-provided|Ordering|n/a|n/a|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
+See the [metrics documentation](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/metrics.md) for details on the out of the box metrics and histograms collected by this SDK and reported to Wavefront.
 
-### Granular Response related histograms
-|Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
-| ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|-----:|-----:|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.latency|WavefrontHistogram|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-|jersey.server.response.inventory.orders.fulfilled.GET.200.cpu_ns|WavefrontHistogram|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
-
-### Overall Response related metrics
-This includes all the completed requests that returned a response (i.e. success + errors).
-
-|Entity Name| Entity Type|source|application|cluster|service|shard|
-| ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|
-|jersey.server.response.completed.aggregated_per_source.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|
-|jersey.server.response.completed.aggregated_per_shard.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|Inventory|primary|
-|jersey.server.response.completed.aggregated_per_service.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|Inventory|n/a|
-|jersey.server.response.completed.aggregated_per_cluster.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|n/a|n/a|
-|jersey.server.response.completed.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
-
-### Overall Error Response related metrics
-This includes all the completed requests that resulted in an error response (that is HTTP status code of 4xx or 5xx).
-
-|Entity Name| Entity Type|source|application|cluster|service|shard|
-| ------------- |:-------------:| -----:|-----:|-----:|-----:|-----:|
-|jersey.server.response.errors.aggregated_per_source.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|
-|jersey.server.response.errors.aggregated_per_shard.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|Inventory|primary|
-|jersey.server.response.errors.aggregated_per_service.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|Inventory|n/a|
-|jersey.server.response.errors.aggregated_per_cluster.count|DeltaCounter|wavefont-provided|Ordering|us-west-1|n/a|n/a|
-|jersey.server.response.errors.aggregated_per_application.count|DeltaCounter|wavefont-provided|Ordering|n/a|n/a|n/a|
-
-### Tracing Spans
-
-Every span will have the operation name as span name, start time in millisec along with duration in millisec. The following table includes all the rest attributes of generated tracing spans.  
-
-| Span Tag Key          | Span Tag Value                         |
-| --------------------- | -------------------------------------- |
-| traceId               | 4a3dc181-d4ac-44bc-848b-133bb3811c31   |
-| parent                | q908ddfe-4723-40a6-b1d3-1e85b60d9016   |
-| followsFrom           | b768ddfe-4723-40a6-b1d3-1e85b60d9016   |
-| spanId                | c908ddfe-4723-40a6-b1d3-1e85b60d9016   |
-| component             | jersey-server                          |
-| span.kind             | server                                 |
-| application           | OrderingApp                            |
-| service               | inventory                              |
-| cluster               | us-west-2                              |
-| shard                 | secondary                              |
-| location              | Oregon (*custom tag)                   |
-| env                   | Staging (*custom tag)                  |
-| http.method           | GET                                    |
-| http.url              | http://{SERVER_ADDR}/orders/fulfilled  |
-| http.status_code      | 502                                    |
-| error                 | True                                   |
-| jersey.path           | "/orders/fulfilled"                    |
-| jersey.resource.class | com.sample.ordering.InventoryController |
-
+## Cross Process Context Propagation
+See the [tracing documentation](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#cross-process-context-propagation) for details on propagating span contexts across process boundaries.
