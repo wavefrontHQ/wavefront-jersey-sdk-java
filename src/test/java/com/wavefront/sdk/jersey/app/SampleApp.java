@@ -90,7 +90,7 @@ public class SampleApp extends Application<Configuration> {
         customTags(new HashMap<String, String>() {{
           put("location", "SF");
           put("env", "Staging");
-        }}).build()).withTracer(new WavefrontTracer.Builder().withReporter(new Reporter() {
+        }}).build()).withTracer(new WavefrontTracer.Builder(new Reporter() {
       @Override
       public void report(WavefrontSpan span) {
         spanCache.putIfAbsent(span.getOperationName(), span);
@@ -105,7 +105,7 @@ public class SampleApp extends Application<Configuration> {
       public void close() {
         // no-op
       }
-    }).build()).build());
+    }, new ApplicationTags.Builder("myApp", "myService").build()).build()).build());
   }
 
   public int reportedValue(MetricName metricName) {
