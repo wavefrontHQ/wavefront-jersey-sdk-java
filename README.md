@@ -126,3 +126,6 @@ wfJerseyReporter.stop();
 ## Metrics and Histograms Sent From Jersey Operations
 
 See the [metrics documentation](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/metrics.md) for details on the out of the box metrics and histograms collected by this SDK and reported to Wavefront.
+
+## Cross Process Context Propagation
+See the [tracing documentation](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#cross-process-context-propagation) for details on propagating span contexts across process boundaries.
