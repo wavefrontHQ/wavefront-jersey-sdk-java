@@ -60,7 +60,7 @@ public class SampleApp extends Application<Configuration> {
       httpPort = ((ServerConnector) server.getConnectors()[0]).getLocalPort();
     });
     environment.jersey().register(new SampleResource());
-    environment.getApplicationContext().setContextPath("/sample");
+    environment.getApplicationContext().setContextPath("/");
     environment.jersey().register(new WavefrontJerseyFilter.Builder(new SdkReporter() {
       @Override
       public void incrementCounter(MetricName metricName) {
