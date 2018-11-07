@@ -59,16 +59,16 @@ You can optionally specify:
 ApplicationTags applicationTags = buildTags(); // pseudocode; see above
 
 // Create WavefrontJerseyReporter.Builder using applicationTags.
-WavefrontJerseyReporter.Builder builder = new WavefrontJerseyReporter.Builder(applicationTags);
+WavefrontJerseyReporter.Builder wfJerseyReporterBuilder = new WavefrontJerseyReporter.Builder(applicationTags);
 
 // Optionally set a nondefault source name for your metrics and histograms. Omit this statement to use the host name.
-builder.withSource("mySource");
+wfJerseyReporterBuilder.withSource("mySource");
 
 // Optionally change the reporting interval to 30 seconds. Default is 1 minute
-builder.reportingIntervalSeconds(30);
+wfJerseyReporterBuilder.reportingIntervalSeconds(30);
 
 // Create a WavefrontJerseyReporter with a WavefronSender
-WavefrontJerseyReporter wfJerseyReporter = builder.build(wavefrontSender);
+WavefrontJerseyReporter wfJerseyReporter = wfJerseyReporterBuilder.build(wavefrontSender);
 ```
 
 ### 4. WavefrontTracer (Optional)
