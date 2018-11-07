@@ -47,8 +47,8 @@ The `WavefrontSender` is used by both the `WavefrontJerseyReporter` and the opti
 A `WavefrontJerseyReporter` object reports metrics and histograms to Wavefront.
 
 To build a `WavefrontJerseyReporter`, you must specify:
-* An `ApplicationTags` object (see above)
-* A `WavefrontSender` object (see above).
+* An `ApplicationTags` object ([see above](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#1-set-up-application-tags))
+* A `WavefrontSender` object ([see above](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#2-set-up-a-wavefrontsender)).
 
 You can optionally specify:
 * A nondefault source for the reported data. If you omit the source, the host name is automatically used.
@@ -75,7 +75,7 @@ WavefrontJerseyReporter wfJerseyReporter = builder.build(wavefrontSender);
 You can optionally configure the `WavefrontTracer` to create and send trace data from your Jersey application to Wavefront.
 
 To build a `WavefrontTracer`, you must specify:
-* The `ApplicationTags` object (see above).
+* The `ApplicationTags` object ([see above](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#1-set-up-application-tags)).
 * A `WavefrontSpanReporter` for reporting trace data to Wavefront. See [Create a WavefrontSpanReporter](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#create-a-wavefrontspanreporter) for details.
   **Note:** When you create the `WavefrontSpanReporter`, you should instantiate it with the same source name and `WavefrontSender` that you used to create the `WavefrontJerseyReporter` (see above).
 
