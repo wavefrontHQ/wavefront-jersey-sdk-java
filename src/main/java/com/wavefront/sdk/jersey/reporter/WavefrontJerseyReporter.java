@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
+import static com.wavefront.sdk.common.Constants.APPLICATION_TAG_KEY;
+import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
 import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
 
 /**
@@ -127,7 +129,7 @@ public class WavefrontJerseyReporter implements SdkReporter {
       }
 
       Map<String, String> pointTags = new HashMap<>();
-      pointTags.put("application", applicationTags.getApplication());
+      pointTags.put(APPLICATION_TAG_KEY, applicationTags.getApplication());
       if (applicationTags.getCustomTags() != null) {
         pointTags.putAll(applicationTags.getCustomTags());
       }

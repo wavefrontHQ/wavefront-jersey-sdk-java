@@ -59,6 +59,12 @@
         </dependency>
         <dependency>
             <groupId>com.wavefront</groupId>
+            <artifactId>wavefront-appagent-sdk-jvm</artifactId>
+            <!-- TODO change from SNAPSHOT to v0.9.0 -->
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wavefront</groupId>
             <artifactId>wavefront-opentracing-sdk-java</artifactId>
             <version>0.9.1</version>
         </dependency>
@@ -71,6 +77,16 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.9.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.6</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -92,6 +108,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 </project>
