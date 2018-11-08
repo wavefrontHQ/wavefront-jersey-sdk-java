@@ -455,6 +455,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
     }
   }
 
+  public Tracer getTracer() {
+    return this.tracer;
+  }
+
   public static final class MultivaluedMapFlatIterator<K, V> implements Iterator<Map.Entry<K, V>> {
     private final Iterator<Map.Entry<K, List<V>>> mapIterator;
     private Map.Entry<K, List<V>> mapEntry;
