@@ -52,10 +52,10 @@ public class SampleApp extends Application<Configuration> {
     defaultHttp.setApplicationConnectors(Lists.newArrayList(appConnectorFactory));
     defaultHttp.setAdminConnectors(Lists.newArrayList(adminConnectorFactory));
     ApplicationTags applicationTags = new ApplicationTags.Builder(APPLICATION, SERVICE).cluster(CLUSTER).shard(SHARD).
-            customTags(new HashMap<String, String>() {{
-              put("location", "SF");
-              put("env", "Staging");
-            }}).build();
+        customTags(new HashMap<String, String>() {{
+          put("location", "SF");
+          put("env", "Staging");
+        }}).build();
     environment.lifecycle().addServerLifecycleListener(server -> {
       httpPort = ((ServerConnector) server.getConnectors()[0]).getLocalPort();
     });

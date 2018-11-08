@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static com.wavefront.sdk.common.Constants.CLUSTER_TAG_KEY;
+import static com.wavefront.sdk.common.Constants.SERVICE_TAG_KEY;
+import static com.wavefront.sdk.common.Constants.SHARD_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -57,9 +60,9 @@ public class JerseyAppReporterTest {
     assertEquals(204, invokePostRequest("sample/foo/bar"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barCreate");
     }};
@@ -82,7 +85,7 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -90,17 +93,17 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.POST.204.aggregated_per_shard", new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barCreate");
       put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -138,9 +141,9 @@ public class JerseyAppReporterTest {
     assertEquals(200, invokeGetRequest("sample/foo/bar/123"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barGet");
     }};
@@ -163,7 +166,7 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -171,8 +174,8 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -180,9 +183,9 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.GET.200.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
-          put("shard", SampleApp.SHARD);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -220,9 +223,9 @@ public class JerseyAppReporterTest {
     assertEquals(204, invokePutRequest("sample/foo/bar/123"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barUpdate");
     }};
@@ -245,7 +248,7 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -253,8 +256,8 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -262,9 +265,9 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.PUT.204.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
-          put("shard", SampleApp.SHARD);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -302,9 +305,9 @@ public class JerseyAppReporterTest {
     assertEquals(204, invokeDeleteRequest("sample/foo/bar/123"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barDelete");
     }};
@@ -327,7 +330,7 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -335,8 +338,8 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -344,9 +347,9 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar._id_.DELETE.204.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
-          put("shard", SampleApp.SHARD);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -384,9 +387,9 @@ public class JerseyAppReporterTest {
     assertEquals(200, invokeGetRequest("sample/foo/bar"));
 
     Map<String, String> tags = new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "getAll");
     }};
@@ -409,7 +412,7 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -417,17 +420,17 @@ public class JerseyAppReporterTest {
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
         "response.sample.foo.bar.GET.200.aggregated_per_shard", new HashMap<String, String>() {{
-      put("cluster", SampleApp.CLUSTER);
-      put("service", SampleApp.SERVICE);
-      put("shard", SampleApp.SHARD);
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "getAll");
       put("source", WAVEFRONT_PROVIDED_SOURCE);
@@ -538,40 +541,40 @@ public class JerseyAppReporterTest {
     // jersey.server.total_requests.inflight gauge should be 0
     assertEquals(0, sampleApp.reportedValue(new MetricName(
         "request.inflight", new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
-          put("shard", SampleApp.SHARD);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
     }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_source",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
-          put("shard", SampleApp.SHARD);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
     }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_shard",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
-          put("shard", SampleApp.SHARD);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_service",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
-          put("service", SampleApp.SERVICE);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
     assertEquals(5, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_cluster",
         new HashMap<String, String>() {{
-          put("cluster", SampleApp.CLUSTER);
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 

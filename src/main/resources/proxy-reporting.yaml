@@ -1,0 +1,8 @@
+# If you are using proxy, then use the below configuration
+reportingMechanism: "proxy"
+proxyHost: "localhost"
+proxyMetricsPort: 2878
+proxyDistributionsPort: 40001
+proxyTracingPort: "30000"
+source: "<replace-with-reporting-source>"
+reportTraces: true
