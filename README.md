@@ -20,8 +20,8 @@ This SDK provides a `WavefrontJerseyFilter` for collecting HTTP request/response
 
 You can configure this SDK either using [basic mode](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/basic-mode.md) or [advanced mode](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/advanced-mode.md).
 
-Option 1: **Basic Mode** - Use this mode if you want to quickly setup the Jersey SDK and instrument your application. This mode will configure Jersey component for you. Since the Jersey based application runs on a JVM, this mode will also configure and instrument JVM component for you. This is the fastest way to instrument your Jersey based application.
+Option 1: `Basic Mode` - Use this mode if you want to quickly setup the Jersey SDK and instrument your application. This mode will configure Jersey component for you. Since the Jersey based application runs on a JVM, this mode will also configure and instrument JVM component for you. This is the fastest way to instrument your Jersey based application.
 
 </br>
-Option 2: **Advanced Mode** - Use this mode if you want a stricter control on how you want to instrument your application. This mode gives you more knobs to configure the SDK depending on your needs. If you are a Wavefront power user, you might want to go with this option.
+Option 2: `Advanced Mode` - Use this mode if you want a stricter control on how you want to instrument your application. This mode gives you more knobs to configure the SDK depending on your needs. If you are a Wavefront power user, you might want to go with this option.
 

@@ -5,8 +5,8 @@ This document explains the basic mode to configure Wavefront Jersey SDK.
 This SDK provides a `WavefrontJerseyFilter` for collecting HTTP request/response metrics and histograms. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work.
 
 The steps for creating a `WavefrontJerseyFilter` are:
-1. Set up Application Tags.
-2. Set up WavefrontReportingConfig to report out of the box metrics, histograms and traces to Wavefront.
+1. Set up `ApplicationTags`.
+2. Set up `WavefrontReportingConfig` to report out of the box metrics, histograms and traces to Wavefront.
 3. Create a `WavefrontJerseyFilter`.
 4. Register the `WavefrontJerseyFilter`.
 
