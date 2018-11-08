@@ -166,12 +166,14 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
-      Optional<Pair<String, String>> requestOptionalPair = MetricNameUtils.metricNameAndPath(request);
+      Optional<Pair<String, String>> requestOptionalPair =
+          MetricNameUtils.metricNameAndPath(request);
       if (!requestOptionalPair.isPresent()) {
         return;
       }
       String requestMetricKey = requestOptionalPair.get()._1;
-      Optional<String> responseOptionalPair = MetricNameUtils.metricName(request, containerResponseContext);
+      Optional<String> responseOptionalPair = MetricNameUtils.metricName(request,
+          containerResponseContext);
       if (!responseOptionalPair.isPresent()) {
         return;
       }
@@ -386,7 +388,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       put(CLUSTER_TAG_KEY, applicationTags.getCluster() == null ? NULL_TAG_VAL :
           applicationTags.getCluster());
       put(SERVICE_TAG_KEY, applicationTags.getService());
-      put(SHARD_TAG_KEY, applicationTags.getShard() == null ? NULL_TAG_VAL : applicationTags.getShard());
+      put(SHARD_TAG_KEY,
+          applicationTags.getShard() == null ? NULL_TAG_VAL : applicationTags.getShard());
       put("jersey.resource.class", finalClassName);
       put("jersey" + ".resource.method", finalMethodName);
     }};
@@ -447,8 +450,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
     @Override
     public void put(String key, String value) {
-      throw new UnsupportedOperationException(
-              ServerHeadersExtractTextMap.class.getName() +" should only be used with Tracer.extract()");
+      throw new UnsupportedOperationException(ServerHeadersExtractTextMap.class.getName() +
+          " should only be used with Tracer.extract()");
     }
   }
 
@@ -471,9 +474,9 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         this.listIterator = ((List)this.mapEntry.getValue()).iterator();
       }
 
-      return this.listIterator.hasNext() ?
-              new AbstractMap.SimpleImmutableEntry(this.mapEntry.getKey(), this.listIterator.next()) :
-              new AbstractMap.SimpleImmutableEntry(this.mapEntry.getKey(), (Object)null);
+      return this.listIterator.hasNext() ? new AbstractMap.SimpleImmutableEntry(
+          this.mapEntry.getKey(), this.listIterator.next()) : new AbstractMap.SimpleImmutableEntry(
+              this.mapEntry.getKey(), (Object)null);
     }
 
     public void remove() {
