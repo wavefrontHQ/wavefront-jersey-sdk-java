@@ -3,3 +3,4 @@ reportingMechanism: "direct"
 server: "<replace-with-wavefront-url>"
 token: "<replace-with-wavefront-api-token>"
 source: "<replace-with-reporting-source>"
+reportTraces: true
