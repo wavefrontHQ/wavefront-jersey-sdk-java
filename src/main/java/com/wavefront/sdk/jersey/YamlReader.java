@@ -12,9 +12,9 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import java.io.IOException;
 
-import static com.wavefront.config.Instantiator.constructApplicationTags;
-import static com.wavefront.config.Instantiator.constructWavefrontReportingConfig;
-import static com.wavefront.config.Instantiator.constructWavefrontSender;
+import static com.wavefront.config.ReportingUtils.constructApplicationTags;
+import static com.wavefront.config.ReportingUtils.constructWavefrontReportingConfig;
+import static com.wavefront.config.ReportingUtils.constructWavefrontSender;
 
 /**
  * A basic mode to configure Jersey server SDK and report Jersey metrics, histograms and tracing
