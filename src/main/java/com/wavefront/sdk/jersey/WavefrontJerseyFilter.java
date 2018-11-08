@@ -168,6 +168,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         return;
       }
       String requestMetricKey = requestOptionalPair.get()._1;
+      if (tracer != null) {
+        String matchingPath = requestOptionalPair.get()._2;
+        containerResponseContext.getHeaders().add("WF_SPAN_OPERATION_NAME", matchingPath);
+      }
       Optional<String> responseOptionalPair = MetricNameUtils.metricName(request, containerResponseContext);
       if (!responseOptionalPair.isPresent()) {
         return;
