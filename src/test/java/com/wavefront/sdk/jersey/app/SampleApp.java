@@ -68,6 +68,11 @@ public class SampleApp extends Application<Configuration> {
       }
 
       @Override
+      public void incrementCounter(MetricName metricName, long l) {
+        computeIfAbsent(metricName).addAndGet((int) l);
+      }
+
+      @Override
       public void incrementDeltaCounter(MetricName metricName) {
         computeIfAbsent(metricName).incrementAndGet();
       }

@@ -41,7 +41,7 @@ abstract class MetricNameUtils {
     return optionalMetricName.map(metricName -> metricName._1 + "." + response.getStatus());
   }
 
-  private static Optional<Pair<String, String>> metricNameAndPath(ContainerRequest request, String prefix) {
+  static Optional<Pair<String, String>> metricNameAndPath(ContainerRequest request, String prefix) {
     Resource matchedResource = request.getUriInfo().getMatchedModelResource();
     if (matchedResource != null) {
       StringBuilder matchingPath = new StringBuilder(stripLeadingAndTrailingSlashes(

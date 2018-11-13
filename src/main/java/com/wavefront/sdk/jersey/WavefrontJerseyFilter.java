@@ -4,16 +4,26 @@ import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.common.application.ApplicationTags;
-import io.opentracing.Scope;
-import io.opentracing.Span;
-import io.opentracing.SpanContext;
-import io.opentracing.Tracer;
-import io.opentracing.propagation.TextMap;
-import io.opentracing.tag.Tags;
-import io.opentracing.propagation.Format;
+
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.internal.routing.RoutingContext;
+
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -21,22 +31,14 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
-import java.util.AbstractMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.SpanContext;
+import io.opentracing.Tracer;
+import io.opentracing.propagation.Format;
+import io.opentracing.propagation.TextMap;
+import io.opentracing.tag.Tags;
 import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.CLUSTER_TAG_KEY;
@@ -62,7 +64,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   @Nullable
   private final Tracer tracer;
 
-  private WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags,
+  private WavefrontJerseyFilter(SdkReporter wfJerseyReporter,
+                                ApplicationTags applicationTags,
                                 @Nullable Tracer tracer) {
     Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
@@ -292,13 +295,15 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       wfJerseyReporter.incrementDeltaCounter(new MetricName(responseMetricKey +
           ".aggregated_per_application", aggregatedPerApplicationMap));
 
-     /*
+      /*
        * Overall error response metrics
        * 1) <prefix>.response.errors.aggregated_per_source (Counter)
        * 2) <prefix>.response.errors.aggregated_per_shard (DeltaCounter)
        * 3) <prefix>.response.errors.aggregated_per_service (DeltaCounter)
        * 4) <prefix>.response.errors.aggregated_per_cluster (DeltaCounter)
        * 5) <prefix>.response.errors.aggregated_per_application (DeltaCounter)
+       * API granular error metrics
+       * 1) jersey.server.response.api.v2.alert.summary.GET.errors
        */
       if (isErrorStatusCode(containerResponseContext)) {
         wfJerseyReporter.incrementCounter(new MetricName("response.errors",
@@ -317,6 +322,13 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         }
         wfJerseyReporter.incrementDeltaCounter(new MetricName(
             "response.errors.aggregated_per_application", overallAggregatedPerApplicationMap));
+        Optional<Pair<String, String>> ApiPathOnlyOptional =
+            MetricNameUtils.metricNameAndPath(request, "response.");
+        if (ApiPathOnlyOptional.isPresent()) {
+          String responseErrorMetric = ApiPathOnlyOptional.get()._1;
+          wfJerseyReporter.incrementCounter(new MetricName(responseErrorMetric + ".errors",
+              completeTagsMap));
+        }
       }
 
       /*
@@ -355,6 +367,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       long apiLatency = System.currentTimeMillis() - startTime.get();
       wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".latency",
               completeTagsMap), apiLatency);
+      /**
+       * total time spent counter: jersey.server.response.api.v2.alert.summary.GET.200.total_time
+       */
+      wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey + ".total_time",
+          completeTagsMap), apiLatency);
     }
   }
 
