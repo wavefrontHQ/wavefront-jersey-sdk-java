@@ -19,7 +19,7 @@ If you are using Maven, add the following maven dependency to your pom.xml:
 
 Choose the setup option that best fits your use case.
 
-* [**Option 1: Quickstart**](#quickstart) - Use configuration files, plus a few code changes, to quickly instrument the Jersey framework and the JVM in your microservice. Default settings are used wherever possible.
+* [**Option 1: Quickstart**](#quickstart) - Use configuration files, plus a few code changes, to quickly instrument the Jersey framework and the JVM in your microservice. Default settings are used.
 
 * [**Option 2: Custom Setup**](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/custom.md) - Instantiate helper objects in your code for complete control over all settable aspects of instrumenting the Jersey framework in a microservice. Appropriate for Wavefront power users.
 
@@ -53,10 +53,10 @@ For each web service in your Jersey application:
       location: "Palo-Alto"
       env: "production"
     ```
-**Note:** 
-* `application` is required. Use the same value for all microservices in the same application.
-* `service` is required. Use a unique value for each microservice in the application.  
-* `cluster`, `shard` and `customTags` are optional and can be omitted.
+    **Note:** 
+    * `application` is required. Use the same value for all microservices in the same application.
+    * `service` is required. Use a unique value for each microservice in the application.  
+    * `cluster`, `shard` and `customTags` are optional and can be omitted.
 
 ### 2. Configure Wavefront Reporting
 
@@ -64,7 +64,7 @@ You can choose to report out-of-the-box metrics, histograms, and traces to Wavef
 
 **Option 1 - Send data to a Wavefront proxy**
 
-Make sure your Wavefront proxy is [installed](http//docs.wavefront.com/proxies_installing.html) and [configured to listen on ports](http//docs.wavefront.com/proxies_installing.html#configuring-proxy-ports-for-metrics-histograms-and-traces) for metrics, histogram distributions, and trace data. 
+Make sure your Wavefront proxy is [installed](http://docs.wavefront.com/proxies_installing.html) and [configured to listen on ports](http://docs.wavefront.com/proxies_installing.html#configuring-proxy-ports-for-metrics-histograms-and-traces) for metrics, histogram distributions, and trace data. 
 
 For each web service in your Jersey application:
 1. Create a `wf-reporting-config.yaml` configuration file.
@@ -80,10 +80,12 @@ For each web service in your Jersey application:
     reportTraces: true
     ```
     **Note:**  This example assumes you set up a proxy to listen on ports `2878` for metrics, `40000` for histogram distributions, and `30000` for trace data.
+    
+    **Note:** You can suppress trace data by setting `reportTraces` to false.
 
 **Option 2 - Send data directly to the Wavefront service**
 
-You'll need to identify the URL for your Wavefront instance and [obtain an API token](http//docs.wavefront.com/wavefront_api.html#generating-an-api-token).
+You'll need to identify the URL for your Wavefront instance and [obtain an API token](http://docs.wavefront.com/wavefront_api.html#generating-an-api-token).
 
 For each web service in your Jersey application:
 1. Create a `wf-reporting-config.yaml` configuration file.
@@ -96,7 +98,7 @@ For each web service in your Jersey application:
     source: "<replace-with-reporting-source>"
     reportTraces: true
     ```
-**Note:** You can suppress trace data by setting `reportTraces` to false.
+    **Note:** You can suppress trace data by setting `reportTraces` to false.
 
 ### 3. Create a WavefrontJerseyFilter
 
