@@ -21,7 +21,7 @@ Choose the setup option that best fits your use case.
 
 * [**Option 1: Quickstart**](#quickstart) - Use configuration files, plus a few code changes, to quickly instrument the Jersey framework and the JVM in your microservice. Default settings are used wherever possible.
 
-* [**Option 2: Custom Setup**](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/advanced-mode.md) - Instantiate helper objects in your code for complete control over all settable aspects of instrumenting the Jersey framework in a microservice. Appropriate for Wavefront power users.
+* [**Option 2: Custom Setup**](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/custom.md) - Instantiate helper objects in your code for complete control over all settable aspects of instrumenting the Jersey framework in a microservice. Appropriate for Wavefront power users.
 
 ## Quickstart
 
