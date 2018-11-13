@@ -1,10 +1,12 @@
 # Wavefront Jersey SDK
-This document explains the advanced mode to configure Wavefront Jersey SDK.
+This page provides custom steps for setting up the Wavefront by VMware Jersey SDK in your application. With custom setup, you instantiate helper objects explicitly in your code instead of using the configuration files shown with [Quickstart setup](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/README.html).
 
-## Set Up a WavefrontJerseyFilter
-This SDK provides a `WavefrontJerseyFilter` for collecting HTTP request/response metrics and histograms. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work.
+Custom setup gives you complete control over all settable aspects of instrumenting the Jersey framework in a microservice. You should use custom setup if you want to tune performance through the `WavefrontSender`, or if you want to implement your own configuration-file mechanism.  
 
-The steps for creating a `WavefrontJerseyFilter` are:
+## Custom Setup
+Follow the steps below to set up a `WavefrontJerseyFilter` for collecting HTTP request/response metrics and histograms. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work.
+
+For each microservice in your application that uses a Jersey-compliant framework: 
 1. Create an `ApplicationTags` instance, which specifies metadata about your application.
 2. Create a `WavefrontSender` for sending data to Wavefront.
 3. Create a `WavefrontJerseyReporter` for reporting Jersey metrics and histograms to Wavefront.
