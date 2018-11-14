@@ -4,8 +4,10 @@ import com.wavefront.config.WavefrontReportingConfig;
 import com.wavefront.opentracing.WavefrontTracer;
 import com.wavefront.opentracing.reporting.WavefrontSpanReporter;
 import com.wavefront.sdk.appagent.jvm.reporter.WavefrontJvmReporter;
+import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
+import com.wavefront.sdk.jaxrs.client.ClientTracingFilter;
 import com.wavefront.sdk.jersey.reporter.WavefrontJerseyReporter;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -24,8 +26,8 @@ import static com.wavefront.config.ReportingUtils.constructWavefrontSender;
  * @author Sushant Dewan (sushant@wavefront.com).
  */
 public abstract class YamlReader {
-  public static WavefrontJerseyFilter constructJerseyFilter(String applicationTagsYamlFile,
-                                                            String wfReportingConfigYamlFile) {
+  public static Pair<WavefrontJerseyFilter, ClientTracingFilter> constructJerseyFilter(
+      String applicationTagsYamlFile, String wfReportingConfigYamlFile) {
     // Step 1 - Create an ApplicationTags instance, which specifies metadata about your application.
     ApplicationTags applicationTags = constructApplicationTags(applicationTagsYamlFile);
 
@@ -45,6 +47,7 @@ public abstract class YamlReader {
     WavefrontJerseyFilter.Builder wfJerseyFilterBuilder = new WavefrontJerseyFilter.Builder
             (wfJerseyReporter, applicationTags);
 
+    WavefrontTracer tracer = null;
     if (BooleanUtils.isTrue(wfReportingConfig.getReportTraces())) {
       // Step 6 - Optionally create a WavefrontTracer for reporting trace data
       // from Jersey APIs to Wavefront.
@@ -55,8 +58,8 @@ public abstract class YamlReader {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-      wfJerseyFilterBuilder.withTracer(new WavefrontTracer.Builder(wfSpanReporter,
-              applicationTags).build());
+      tracer = new WavefrontTracer.Builder(wfSpanReporter, applicationTags).build();
+      wfJerseyFilterBuilder.withTracer(tracer);
     }
 
     // Step 7 - Start the Jersey reporter to report metrics and histograms
@@ -70,7 +73,7 @@ public abstract class YamlReader {
     wfJvmReporter.start();
 
     // Step 10 - Return the filter that you should register with your Jersey based application.
-    return wfJerseyFilterBuilder.build();
+    return new Pair<>(wfJerseyFilterBuilder.build(), new ClientTracingFilter(tracer));
   }
 
 }
