@@ -1,5 +1,5 @@
 # Wavefront Jersey SDK
-This page provides custom steps for setting up the Wavefront by VMware Jersey SDK in your application. With custom setup, you instantiate helper objects explicitly in your code instead of using the configuration files shown with [Quickstart setup](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/README.html).
+This page provides custom steps for setting up the Wavefront by VMware Jersey SDK in your application. With custom setup, you instantiate helper objects explicitly in your code instead of using the configuration files shown with [Quickstart setup](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#quickstart).
 
 Custom setup gives you complete control over all settable aspects of instrumenting the Jersey framework in a microservice. You should use custom setup if you want to tune performance through the `WavefrontSender`, or if you want to implement your own configuration-file mechanism.  
 
