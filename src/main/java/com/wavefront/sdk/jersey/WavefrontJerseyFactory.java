@@ -1,23 +1,27 @@
 package com.wavefront.sdk.jersey;
 
+import com.wavefront.config.ApplicationTagsConfig;
 import com.wavefront.config.WavefrontReportingConfig;
 import com.wavefront.opentracing.WavefrontTracer;
 import com.wavefront.opentracing.reporting.WavefrontSpanReporter;
 import com.wavefront.sdk.appagent.jvm.reporter.WavefrontJvmReporter;
 import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
+import com.wavefront.sdk.direct.ingestion.WavefrontDirectIngestionClient;
 import com.wavefront.sdk.jaxrs.client.WavefrontJaxrsClientFilter;
 import com.wavefront.sdk.jersey.reporter.WavefrontJerseyReporter;
+import com.wavefront.sdk.proxy.WavefrontProxyClient;
 
 import org.apache.commons.lang3.BooleanUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 import io.opentracing.Tracer;
 
-import static com.wavefront.config.ReportingUtils.constructApplicationTags;
-import static com.wavefront.config.ReportingUtils.constructWavefrontReportingConfig;
-import static com.wavefront.config.ReportingUtils.constructWavefrontSender;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
 /**
  * A basic mode to configure Jersey server SDK and report Jersey metrics, histograms and tracing
@@ -122,5 +126,83 @@ public class WavefrontJerseyFactory {
 
   public WavefrontJvmReporter getWavefrontJvmReporter() {
     return wfJvmReporter;
+  }
+
+  /**
+   * Construct {@link WavefrontSender) from {@link WavefrontReportingConfig}
+   * TODO: Remove once new version of wavefront-internal-reporter-java is released
+   */
+  private static WavefrontSender constructWavefrontSender(
+      WavefrontReportingConfig wfReportingConfig) {
+    String reportingMechanism = wfReportingConfig.getReportingMechanism();
+    switch (reportingMechanism) {
+      case WavefrontReportingConfig.proxyReporting:
+        return new WavefrontProxyClient.Builder(wfReportingConfig.getProxyHost()).
+            metricsPort(wfReportingConfig.getProxyMetricsPort()).
+            distributionPort(wfReportingConfig.getProxyDistributionsPort()).
+            tracingPort(wfReportingConfig.getProxyTracingPort()).build();
+      case WavefrontReportingConfig.directReporting:
+        return new WavefrontDirectIngestionClient.Builder(
+            wfReportingConfig.getServer(), wfReportingConfig.getToken()).build();
+      default:
+        throw new RuntimeException("Invalid reporting mechanism:" + reportingMechanism);
+    }
+  }
+
+  /**
+   * Construct {@link ApplicationTags} from given path of YAML file
+   * TODO: Remove once new version of wavefront-internal-reporter-java is released
+   */
+  private static ApplicationTags constructApplicationTags(String applicationTagsYamlFile) {
+    YAMLFactory factory = new YAMLFactory(new ObjectMapper());
+    YAMLParser parser;
+    try {
+      parser = factory.createParser(new File(applicationTagsYamlFile));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    ApplicationTagsConfig applicationTagsConfig;
+    try {
+      applicationTagsConfig = parser.readValueAs(ApplicationTagsConfig.class);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    ApplicationTags.Builder applicationTagsBuilder = new ApplicationTags.Builder(
+        applicationTagsConfig.getApplication(), applicationTagsConfig.getService());
+
+    if (applicationTagsConfig.getCluster() != null) {
+      applicationTagsBuilder.cluster(applicationTagsConfig.getCluster());
+    }
+
+    if (applicationTagsConfig.getShard() != null) {
+      applicationTagsBuilder.shard(applicationTagsConfig.getShard());
+    }
+
+    if (applicationTagsConfig.getCustomTags() != null) {
+      applicationTagsBuilder.customTags(applicationTagsConfig.getCustomTags());
+    }
+
+    return applicationTagsBuilder.build();
+  }
+
+  /**
+   * Construct {@link WavefrontReportingConfig} from given path of YAML file
+   * TODO: Remove once new version of wavefront-internal-reporter-java is released
+   */
+  private static WavefrontReportingConfig constructWavefrontReportingConfig(
+      String wfReportingConfigYamlFile) {
+    YAMLFactory factory = new YAMLFactory(new ObjectMapper());
+    YAMLParser parser;
+    try {
+      parser = factory.createParser(new File(wfReportingConfigYamlFile));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    try {
+      return parser.readValueAs(WavefrontReportingConfig.class);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

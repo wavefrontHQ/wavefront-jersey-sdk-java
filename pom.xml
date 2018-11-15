@@ -57,6 +57,18 @@
             <version>0.9.0</version>
         </dependency>
         <dependency>
+            <!--TODO: Remove once new version of wavefront-internal-reporter-java is released-->
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.9.6</version>
+        </dependency>
+        <dependency>
+            <!--TODO: Remove once new version of wavefront-internal-reporter-java is released-->
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.6</version>
+        </dependency>
+        <dependency>
             <groupId>com.wavefront</groupId>
             <artifactId>wavefront-appagent-sdk-jvm</artifactId>
             <!-- TODO change from SNAPSHOT to v0.9.0 -->
