@@ -47,6 +47,8 @@ import static com.wavefront.sdk.common.Constants.SERVICE_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.SHARD_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
+import static com.wavefront.sdk.jersey.MetricNameUtils.REQUEST_PREFIX;
+import static com.wavefront.sdk.jersey.MetricNameUtils.RESPONSE_PREFIX;
 
 /**
  * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
@@ -103,12 +105,12 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       ContainerRequest request = (ContainerRequest) containerRequestContext;
       startTime.set(System.currentTimeMillis());
       startTimeCpuNanos.set(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime());
-      Optional<Pair<String, String>> optionalPair = MetricNameUtils.metricNameAndPath(request);
-      if (!optionalPair.isPresent()) {
+      Optional<Pair<String, String>> pairOptional = MetricNameUtils.metricNameAndPath(request);
+      if (!pairOptional.isPresent()) {
         return;
       }
-      String requestMetricKey = optionalPair.get()._1;
-      String finalMatchingPath = optionalPair.get()._2;
+      String requestMetricKey = REQUEST_PREFIX + pairOptional.get()._1;
+      String finalMatchingPath = pairOptional.get()._2;
       ExtendedUriInfo uriInfo = request.getUriInfo();
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
@@ -169,18 +171,16 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
-      Optional<Pair<String, String>> requestOptionalPair =
-          MetricNameUtils.metricNameAndPath(request);
-      if (!requestOptionalPair.isPresent()) {
+      Optional<Pair<String, String>> apiPathOptionalPair = MetricNameUtils.metricNameAndPath
+          (request);
+      if (!apiPathOptionalPair.isPresent()) {
         return;
       }
-      String requestMetricKey = requestOptionalPair.get()._1;
-      Optional<String> responseOptionalPair = MetricNameUtils.metricName(request,
-          containerResponseContext);
-      if (!responseOptionalPair.isPresent()) {
-        return;
-      }
-      String responseMetricKey = responseOptionalPair.get();
+      String requestMetricKey = REQUEST_PREFIX + apiPathOptionalPair.get()._1;
+      String responseMetricKeyWithoutStatus = RESPONSE_PREFIX + apiPathOptionalPair.get()._1;
+      String responseMetricKey =
+          responseMetricKeyWithoutStatus + "." + containerResponseContext.getStatus();
+
 
       /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
@@ -279,6 +279,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
        * 3) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_service.count (DeltaCounter)
        * 4) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_cluster.count (DeltaCounter)
        * 5) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_application.count (DeltaCounter)
+       * 6) jersey.server.response.api.v2.alert.summary.GET.errors (Counter)
        */
       wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey +
           ".cumulative", completeTagsMap));
@@ -297,15 +298,15 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
       /*
        * Overall error response metrics
-       * 1) <prefix>.response.errors.aggregated_per_source (Counter)
-       * 2) <prefix>.response.errors.aggregated_per_shard (DeltaCounter)
-       * 3) <prefix>.response.errors.aggregated_per_service (DeltaCounter)
-       * 4) <prefix>.response.errors.aggregated_per_cluster (DeltaCounter)
-       * 5) <prefix>.response.errors.aggregated_per_application (DeltaCounter)
-       * API granular error metrics
-       * 1) jersey.server.response.api.v2.alert.summary.GET.errors
+       * 1) jersey.server.response.errors.aggregated_per_source (Counter)
+       * 2) jersey.server.response.errors.aggregated_per_shard (DeltaCounter)
+       * 3) jersey.server.response.errors.aggregated_per_service (DeltaCounter)
+       * 4) jersey.server.response.errors.aggregated_per_cluster (DeltaCounter)
+       * 5) jersey.server.response.errors.aggregated_per_application (DeltaCounter)
        */
       if (isErrorStatusCode(containerResponseContext)) {
+        wfJerseyReporter.incrementCounter(new MetricName(responseMetricKeyWithoutStatus + ".errors",
+            completeTagsMap));
         wfJerseyReporter.incrementCounter(new MetricName("response.errors",
             completeTagsMap));
         wfJerseyReporter.incrementCounter(new MetricName(
@@ -322,13 +323,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         }
         wfJerseyReporter.incrementDeltaCounter(new MetricName(
             "response.errors.aggregated_per_application", overallAggregatedPerApplicationMap));
-        Optional<Pair<String, String>> ApiPathOnlyOptional =
-            MetricNameUtils.metricNameAndPath(request, "response.");
-        if (ApiPathOnlyOptional.isPresent()) {
-          String responseErrorMetric = ApiPathOnlyOptional.get()._1;
-          wfJerseyReporter.incrementCounter(new MetricName(responseErrorMetric + ".errors",
-              completeTagsMap));
-        }
       }
 
       /*

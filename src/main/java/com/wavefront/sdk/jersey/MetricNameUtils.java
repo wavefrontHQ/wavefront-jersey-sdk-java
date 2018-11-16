@@ -1,11 +1,11 @@
 package com.wavefront.sdk.jersey;
 
 import com.wavefront.sdk.common.Pair;
+
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.model.Resource;
 
-import javax.ws.rs.container.ContainerResponseContext;
 import java.util.Optional;
 
 /**
@@ -15,33 +15,16 @@ import java.util.Optional;
  */
 abstract class MetricNameUtils {
 
-  private static final String REQUEST_PREFIX = "request.";
-  private static final String RESPONSE_PREFIX = "response.";
+  static final String REQUEST_PREFIX = "request.";
+  static final String RESPONSE_PREFIX = "response.";
 
   /**
-   * Util to generate metric name from the jersey container request.
+   * Provides the api path which is metric name friendly and the matching api path.
    *
    * @param request jersey container request.
-   * @return generated metric name from the jersey container request.
+   * @return API path for use in metric name.
    */
   static Optional<Pair<String, String>> metricNameAndPath(ContainerRequest request) {
-    return metricNameAndPath(request, REQUEST_PREFIX);
-  }
-
-  /**
-   * Util to generate metric name from the jersey container response.
-   *
-   * @param request  jersey container request.
-   * @param response jersey container response.
-   * @return generated metric name from the jersey container request/response.
-   */
-  static Optional<String> metricName(ContainerRequest request,
-                                     ContainerResponseContext response) {
-    Optional<Pair<String, String>> optionalMetricName = metricNameAndPath(request, RESPONSE_PREFIX);
-    return optionalMetricName.map(metricName -> metricName._1 + "." + response.getStatus());
-  }
-
-  static Optional<Pair<String, String>> metricNameAndPath(ContainerRequest request, String prefix) {
     Resource matchedResource = request.getUriInfo().getMatchedModelResource();
     if (matchedResource != null) {
       StringBuilder matchingPath = new StringBuilder(stripLeadingAndTrailingSlashes(
@@ -53,7 +36,8 @@ abstract class MetricNameUtils {
       }
       Optional<String> optionalMetricName = metricName(request.getMethod(),
           matchingPath.toString());
-      return optionalMetricName.map(metricName -> new Pair<>(prefix + metricName, matchingPath.toString()));
+      return optionalMetricName.map(
+          metricName -> new Pair<>(metricName, matchingPath.toString()));
     }
     return Optional.empty();
   }
