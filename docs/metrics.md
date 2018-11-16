@@ -35,6 +35,8 @@ The following metrics, histograms and spans are reported to Wavefront when this 
 |jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_service.count|DeltaCounter|wavefront-provided|Ordering|us-west-1|Inventory|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 |jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_cluster.count|DeltaCounter|wavefront-provided|Ordering|us-west-1|n/a|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 |jersey.server.response.inventory.orders.fulfilled.GET.200.aggregated_per_appliation.count|DeltaCounter|wavefront-provided|Ordering|n/a|n/a|n/a|com.ordering.InventoryWebResource|getAllFulfilledOrders|
+|jersey.server.response.inventory.orders.fulfilled.GET.200.total_time.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
+|jersey.server.response.inventory.orders.fulfilled.GET.errors.count|Counter|host-1|Ordering|us-west-1|Inventory|primary|com.ordering.InventoryWebResource|getAllFulfilledOrders|
 
 ## Granular Response Histograms
 |Entity Name| Entity Type|source|application|cluster|service|shard|jersey.resource.class|jersey.resource.method|
