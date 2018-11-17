@@ -1,6 +1,7 @@
 package com.wavefront.sdk.jersey.app;
 
 import com.google.common.collect.Lists;
+
 import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.opentracing.WavefrontSpan;
@@ -8,24 +9,28 @@ import com.wavefront.opentracing.WavefrontTracer;
 import com.wavefront.opentracing.reporting.Reporter;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.jersey.WavefrontJerseyFilter;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.setup.Environment;
+
 import org.eclipse.jetty.server.ServerConnector;
+
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import io.dropwizard.Application;
+import io.dropwizard.Configuration;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.setup.Environment;
 
 public class SampleApp extends Application<Configuration> {
   private static final String APPLICATION = "wavefront";
@@ -65,6 +70,11 @@ public class SampleApp extends Application<Configuration> {
       @Override
       public void incrementCounter(MetricName metricName) {
         computeIfAbsent(metricName).incrementAndGet();
+      }
+
+      @Override
+      public void incrementCounter(MetricName metricName, long l) {
+        computeIfAbsent(metricName).addAndGet((int) l);
       }
 
       @Override
@@ -133,7 +143,10 @@ public class SampleApp extends Application<Configuration> {
     // R => read
     @GET
     @Path("/bar/{id}")
-    public String barGet() {
+    public String barGet(@PathParam("id") String id) {
+      if (id.equals("error")) {
+        throw new RuntimeException("error");
+      }
       return "don't care";
     }
 

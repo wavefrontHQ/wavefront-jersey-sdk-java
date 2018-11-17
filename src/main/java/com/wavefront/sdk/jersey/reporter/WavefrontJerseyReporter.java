@@ -54,6 +54,11 @@ public class WavefrontJerseyReporter implements SdkReporter {
   }
 
   @Override
+  public void incrementCounter(MetricName metricName, long n) {
+    wfReporter.newCounter(metricName).inc(n);
+  }
+
+  @Override
   public void incrementDeltaCounter(MetricName metricName) {
     wfReporter.newDeltaCounter(metricName).inc();
   }
