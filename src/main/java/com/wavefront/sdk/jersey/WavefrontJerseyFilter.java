@@ -171,8 +171,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
-      Optional<Pair<String, String>> apiPathOptionalPair = MetricNameUtils.metricNameAndPath
-          (request);
+      Optional<Pair<String, String>> apiPathOptionalPair =
+          MetricNameUtils.metricNameAndPath(request);
       if (!apiPathOptionalPair.isPresent()) {
         return;
       }
