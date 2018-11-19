@@ -106,8 +106,17 @@ In the code for each web service in your Jersey application:
 * Instantiate a `WavefrontJerseyFilter` object. Pass in the configuration files you created above.
     ```java
     // Instantiate the WavefrontJerseyFilter
-    WavefrontJerseyFilter wavefrontJerseyFilter =
-            YamlReader.constructJerseyFilter(applicationTagsYamlFile, wfReportingConfigYamlFile);
+    WavefrontJerseyFactory wavefrontJerseyFactory = new WavefrontJerseyFactory(
+        applicationTagsYamlFile, wfReportingConfigYamlFile);
+    WavefrontJerseyFilter wavefrontJerseyFilter = wavefrontJerseyFactory.getWavefrontJerseyFilter();
+    ```
+
+* *Optional*: You can also get [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java) from the `WavefrontJerseyFactory` for instrumenting your JAX-RS-based client to form a complete trace.
+
+* ```java
+    // Instantiate the WavefrontJaxrsClientFilter
+    WavefrontJaxrsClientFilter wavefrontJaxrsClientFilter = wavefrontJerseyFactory.
+        getWavefrontJaxrsClientFilter();
     ```
 
 ### 4. Register the WavefrontJerseyFilter

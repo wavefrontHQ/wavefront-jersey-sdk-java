@@ -82,6 +82,7 @@
         <dependency>
             <groupId>com.wavefront</groupId>
             <artifactId>wavefront-jaxrs-sdk-java</artifactId>
+            <!-- TODO change from SNAPSHOT to v0.9.0 -->
             <version>0.9.0-SNAPSHOT</version>
         </dependency>
         <dependency>

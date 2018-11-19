@@ -40,6 +40,10 @@ public class WavefrontJerseyFactory {
   private final WavefrontJerseyFilter wavefrontJerseyFilter;
   private final WavefrontJaxrsClientFilter wavefrontJaxrsClientFilter;
 
+  /**
+   * Construct WavefrontJerseyFactory with given yaml files path of application tags and Wavefront
+   * reporting configuration.
+   */
   public WavefrontJerseyFactory(String applicationTagsYamlFile, String wfReportingConfigYamlFile) {
 
     // Step 1 - Create an ApplicationTags instance, which specifies metadata about your application.
