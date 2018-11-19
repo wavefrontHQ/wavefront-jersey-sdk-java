@@ -4,16 +4,26 @@ import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.common.application.ApplicationTags;
-import io.opentracing.Scope;
-import io.opentracing.Span;
-import io.opentracing.SpanContext;
-import io.opentracing.Tracer;
-import io.opentracing.propagation.TextMap;
-import io.opentracing.tag.Tags;
-import io.opentracing.propagation.Format;
+
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.internal.routing.RoutingContext;
+
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -21,22 +31,14 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
-import java.util.AbstractMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.SpanContext;
+import io.opentracing.Tracer;
+import io.opentracing.propagation.Format;
+import io.opentracing.propagation.TextMap;
+import io.opentracing.tag.Tags;
 import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.CLUSTER_TAG_KEY;
@@ -45,6 +47,8 @@ import static com.wavefront.sdk.common.Constants.SERVICE_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.SHARD_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.WAVEFRONT_PROVIDED_SOURCE;
 import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
+import static com.wavefront.sdk.jersey.MetricNameUtils.REQUEST_PREFIX;
+import static com.wavefront.sdk.jersey.MetricNameUtils.RESPONSE_PREFIX;
 
 import static com.wavefront.sdk.jaxrs.Constants.PROPERTY_NAME;
 import static com.wavefront.sdk.jaxrs.Constants.WF_SPAN_HEADER;
@@ -65,7 +69,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   @Nullable
   private final Tracer tracer;
 
-  private WavefrontJerseyFilter(SdkReporter wfJerseyReporter, ApplicationTags applicationTags,
+  private WavefrontJerseyFilter(SdkReporter wfJerseyReporter,
+                                ApplicationTags applicationTags,
                                 @Nullable Tracer tracer) {
     Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
@@ -103,12 +108,12 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       ContainerRequest request = (ContainerRequest) containerRequestContext;
       startTime.set(System.currentTimeMillis());
       startTimeCpuNanos.set(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime());
-      Optional<Pair<String, String>> optionalPair = MetricNameUtils.metricNameAndPath(request);
-      if (!optionalPair.isPresent()) {
+      Optional<Pair<String, String>> pairOptional = MetricNameUtils.metricNameAndPath(request);
+      if (!pairOptional.isPresent()) {
         return;
       }
-      String requestMetricKey = optionalPair.get()._1;
-      String finalMatchingPath = optionalPair.get()._2;
+      String requestMetricKey = REQUEST_PREFIX + pairOptional.get()._1;
+      String finalMatchingPath = pairOptional.get()._2;
       ExtendedUriInfo uriInfo = request.getUriInfo();
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
@@ -169,22 +174,20 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
 
-      Optional<Pair<String, String>> requestOptionalPair =
+      Optional<Pair<String, String>> apiPathOptionalPair =
           MetricNameUtils.metricNameAndPath(request);
-      if (!requestOptionalPair.isPresent()) {
+      if (!apiPathOptionalPair.isPresent()) {
         return;
       }
-      String requestMetricKey = requestOptionalPair.get()._1;
       if (tracer != null) {
-        String matchingPath = requestOptionalPair.get()._2;
+        String matchingPath = apiPathOptionalPair.get()._2;
         containerResponseContext.getHeaders().add(WF_SPAN_HEADER, matchingPath);
       }
-      Optional<String> responseOptionalPair = MetricNameUtils.metricName(request,
-          containerResponseContext);
-      if (!responseOptionalPair.isPresent()) {
-        return;
-      }
-      String responseMetricKey = responseOptionalPair.get();
+      String requestMetricKey = REQUEST_PREFIX + apiPathOptionalPair.get()._1;
+      String responseMetricKeyWithoutStatus = RESPONSE_PREFIX + apiPathOptionalPair.get()._1;
+      String responseMetricKey =
+          responseMetricKeyWithoutStatus + "." + containerResponseContext.getStatus();
+
 
       /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
@@ -283,6 +286,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
        * 3) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_service.count (DeltaCounter)
        * 4) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_cluster.count (DeltaCounter)
        * 5) jersey.server.response.api.v2.alert.summary.GET.200.aggregated_per_application.count (DeltaCounter)
+       * 6) jersey.server.response.api.v2.alert.summary.GET.errors (Counter)
        */
       wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey +
           ".cumulative", completeTagsMap));
@@ -299,15 +303,17 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       wfJerseyReporter.incrementDeltaCounter(new MetricName(responseMetricKey +
           ".aggregated_per_application", aggregatedPerApplicationMap));
 
-     /*
+      /*
        * Overall error response metrics
-       * 1) <prefix>.response.errors.aggregated_per_source (Counter)
-       * 2) <prefix>.response.errors.aggregated_per_shard (DeltaCounter)
-       * 3) <prefix>.response.errors.aggregated_per_service (DeltaCounter)
-       * 4) <prefix>.response.errors.aggregated_per_cluster (DeltaCounter)
-       * 5) <prefix>.response.errors.aggregated_per_application (DeltaCounter)
+       * 1) jersey.server.response.errors.aggregated_per_source (Counter)
+       * 2) jersey.server.response.errors.aggregated_per_shard (DeltaCounter)
+       * 3) jersey.server.response.errors.aggregated_per_service (DeltaCounter)
+       * 4) jersey.server.response.errors.aggregated_per_cluster (DeltaCounter)
+       * 5) jersey.server.response.errors.aggregated_per_application (DeltaCounter)
        */
       if (isErrorStatusCode(containerResponseContext)) {
+        wfJerseyReporter.incrementCounter(new MetricName(responseMetricKeyWithoutStatus + ".errors",
+            completeTagsMap));
         wfJerseyReporter.incrementCounter(new MetricName("response.errors",
             completeTagsMap));
         wfJerseyReporter.incrementCounter(new MetricName(
@@ -362,6 +368,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       long apiLatency = System.currentTimeMillis() - startTime.get();
       wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".latency",
               completeTagsMap), apiLatency);
+      /**
+       * total time spent counter: jersey.server.response.api.v2.alert.summary.GET.200.total_time
+       */
+      wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey + ".total_time",
+          completeTagsMap), apiLatency);
     }
   }
 

@@ -4,6 +4,20 @@ import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.opentracing.WavefrontSpan;
 import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.jersey.app.SampleApp;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -11,17 +25,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 import static com.wavefront.sdk.common.Constants.CLUSTER_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.SERVICE_TAG_KEY;
@@ -53,6 +56,7 @@ public class JerseyAppReporterTest {
     testUpdate();
     testDelete();
     testGetAll();
+    testError();
     testOverallAggregatedMetrics();
   }
 
@@ -464,6 +468,20 @@ public class JerseyAppReporterTest {
     assertEquals(new HashSet<>(expectedTags), new HashSet<>(span.getTagsAsList()));
   }
 
+  private void testError() throws IOException {
+    invokeGetRequest("sample/foo/bar/error");
+    Map<String, String> tags = new HashMap<String, String>() {{
+      put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+      put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+      put(SHARD_TAG_KEY, SampleApp.SHARD);
+      put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
+      put("jersey.resource.method", "barGet");
+    }};
+    // Response counter metric
+    assertEquals(1, sampleApp.reportedValue(new MetricName(
+        "response.sample.foo.bar._id_.GET.errors", tags)));
+  }
+
   private int invokePostRequest(String pathSegments) throws IOException {
     HttpUrl url = new HttpUrl.Builder().scheme("http").host("localhost").port(httpPort).
         addPathSegments(pathSegments).build();
@@ -546,7 +564,7 @@ public class JerseyAppReporterTest {
           put(SHARD_TAG_KEY, SampleApp.SHARD);
     }})));
 
-    assertEquals(5, sampleApp.reportedValue(new MetricName(
+    assertEquals(6, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_source",
         new HashMap<String, String>() {{
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
@@ -554,7 +572,7 @@ public class JerseyAppReporterTest {
           put(SHARD_TAG_KEY, SampleApp.SHARD);
     }})));
 
-    assertEquals(5, sampleApp.reportedValue(new MetricName(
+    assertEquals(6, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_shard",
         new HashMap<String, String>() {{
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
@@ -563,7 +581,7 @@ public class JerseyAppReporterTest {
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
-    assertEquals(5, sampleApp.reportedValue(new MetricName(
+    assertEquals(6, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_service",
         new HashMap<String, String>() {{
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
@@ -571,15 +589,53 @@ public class JerseyAppReporterTest {
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
-    assertEquals(5, sampleApp.reportedValue(new MetricName(
+    assertEquals(6, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_cluster",
         new HashMap<String, String>() {{
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
 
-    assertEquals(5, sampleApp.reportedValue(new MetricName(
+    assertEquals(6, sampleApp.reportedValue(new MetricName(
         "response.completed.aggregated_per_application",
+        new HashMap<String, String>() {{
+          put("source", WAVEFRONT_PROVIDED_SOURCE);
+        }})));
+
+    assertEquals(1, sampleApp.reportedValue(new MetricName(
+        "response.errors.aggregated_per_source",
+        new HashMap<String, String>() {{
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
+        }})));
+
+    assertEquals(1, sampleApp.reportedValue(new MetricName(
+        "response.errors.aggregated_per_shard",
+        new HashMap<String, String>() {{
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put(SHARD_TAG_KEY, SampleApp.SHARD);
+          put("source", WAVEFRONT_PROVIDED_SOURCE);
+        }})));
+
+    assertEquals(1, sampleApp.reportedValue(new MetricName(
+        "response.errors.aggregated_per_service",
+        new HashMap<String, String>() {{
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put(SERVICE_TAG_KEY, SampleApp.SERVICE);
+          put("source", WAVEFRONT_PROVIDED_SOURCE);
+        }})));
+
+    assertEquals(1, sampleApp.reportedValue(new MetricName(
+        "response.errors.aggregated_per_cluster",
+        new HashMap<String, String>() {{
+          put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
+          put("source", WAVEFRONT_PROVIDED_SOURCE);
+        }})));
+
+    assertEquals(1, sampleApp.reportedValue(new MetricName(
+        "response.errors.aggregated_per_application",
         new HashMap<String, String>() {{
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
