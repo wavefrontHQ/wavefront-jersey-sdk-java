@@ -27,7 +27,7 @@ Choose the setup option that best fits your use case.
 
 Follow the steps below to quickly set up a `WavefrontJerseyFilter` for collecting HTTP request/response metrics and histograms. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work.
 
-For each service that uses a Jersey-compliant framework:
+For each service that uses a Jersey-compliant framework, [add the dependency](#maven) if you have not already done so, and then perform the following steps:
 
 1. Configure a set of application tags to describe your application to Wavefront.
 2. Configure how out-of-the-box metrics, histograms and traces are reported to Wavefront.
@@ -62,9 +62,9 @@ For each web service in your Jersey application:
 
 You can choose to report out-of-the-box metrics, histograms, and traces to Wavefront either through a Wavefront proxy or through direct ingestion. 
 
-**Option 1 - Send data to a Wavefront proxy**
+**Option 1 - Send Data to a Wavefront Proxy**
 
-Make sure your Wavefront proxy is [installed](http://docs.wavefront.com/proxies_installing.html) and [configured to listen on ports](http://docs.wavefront.com/proxies_installing.html#configuring-proxy-ports-for-metrics-histograms-and-traces) for metrics, histogram distributions, and trace data. 
+Make sure your Wavefront proxy is [installed](http://docs-beta.wavefront.com/proxies_installing.html) and [configured to listen on ports](http://docs-beta.wavefront.com/tracing_instrumenting_frameworks.html#step-1-prepare-to-send-data-to-wavefront) for metrics, histogram distributions, and trace data. 
 
 For each web service in your Jersey application:
 1. Create a `wf-reporting-config.yaml` configuration file.
@@ -79,13 +79,15 @@ For each web service in your Jersey application:
     source: "<replace-with-reporting-source>"
     reportTraces: true
     ```
-    **Note:**  This example assumes you set up a proxy to listen on ports `2878` for metrics, `40000` for histogram distributions, and `30000` for trace data.
-    
-    **Note:** You can suppress trace data by setting `reportTraces` to false.
+    **Notes:**  
+    * The proxy port properties above must match the corresponding properties in the proxy configuration file (`wavefront.conf`):
+      * Set `proxyMetricsPort` to the same value as `pushListenerPort`.
+      * Set `proxyDistributionsPort` to the same value as `histogramDistListenerPort`.
+      * Set `proxyTracingPort` to the same value as `traceListenerPort`.
+    * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
+    * Optionally set `reportTraces` to false if you want to suppress trace data.
 
-**Option 2 - Send data directly to the Wavefront service**
-
-You'll need to identify the URL for your Wavefront instance and [obtain an API token](http://docs.wavefront.com/wavefront_api.html#generating-an-api-token).
+**Option 2 - Send Data Directly to Wavefront**
 
 For each web service in your Jersey application:
 1. Create a `wf-reporting-config.yaml` configuration file.
@@ -98,12 +100,16 @@ For each web service in your Jersey application:
     source: "<replace-with-reporting-source>"
     reportTraces: true
     ```
-    **Note:** You can suppress trace data by setting `reportTraces` to false.
+    **Notes:** 
+    * Set `server` to the URL for your Wavefront instance, typically `https://myCompany.wavefront.com`. 
+    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token).
+    * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
+    * Optionally set `reportTraces` to false if you want to suppress trace data.
 
 ### 3. Create a WavefrontJerseyFilter
 
 In the code for each web service in your Jersey application:
-* Instantiate a `WavefrontJerseyFilter` object. Pass in the configuration files you created above.
+* Instantiate a `WavefrontJerseyFilter` object. Pass in the path names of the configuration files you created above.
     ```java
     // Instantiate the WavefrontJerseyFilter
     WavefrontJerseyFilter wavefrontJerseyFilter =
