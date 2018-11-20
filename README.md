@@ -102,7 +102,7 @@ For each web service in your Jersey application:
     ```
     **Notes:** 
     * Set `server` to the URL for your Wavefront instance, typically `https://myCompany.wavefront.com`. 
-    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token).
+    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.
     * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
     * Optionally set `reportTraces` to false if you want to suppress trace data.
 
