@@ -50,6 +50,9 @@ import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
 import static com.wavefront.sdk.jersey.MetricNameUtils.REQUEST_PREFIX;
 import static com.wavefront.sdk.jersey.MetricNameUtils.RESPONSE_PREFIX;
 
+import static com.wavefront.sdk.jaxrs.Constants.PROPERTY_NAME;
+import static com.wavefront.sdk.jaxrs.Constants.WF_SPAN_HEADER;
+
 /**
  * A filter to generate Wavefront metrics and histograms for Jersey API requests/responses.
  *
@@ -62,7 +65,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ThreadLocal<Long> startTime = new ThreadLocal<>();
   private final ThreadLocal<Long> startTimeCpuNanos = new ThreadLocal<>();
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
-  private final String PROPERTY_NAME = "com.wavefront.sdk.jersey.internal.SpanWrapper.activeSpanWrapper";
+
   @Nullable
   private final Tracer tracer;
 
@@ -175,6 +178,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
           MetricNameUtils.metricNameAndPath(request);
       if (!apiPathOptionalPair.isPresent()) {
         return;
+      }
+      if (tracer != null) {
+        String matchingPath = apiPathOptionalPair.get()._2;
+        containerResponseContext.getHeaders().add(WF_SPAN_HEADER, matchingPath);
       }
       String requestMetricKey = REQUEST_PREFIX + apiPathOptionalPair.get()._1;
       String responseMetricKeyWithoutStatus = RESPONSE_PREFIX + apiPathOptionalPair.get()._1;
