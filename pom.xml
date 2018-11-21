@@ -11,7 +11,7 @@
 
     <name>Wavefront by VMware Jersey SDK for Java</name>
     <description>Instruments Jersey-compliant APIs to send telemetry data to Wavefront from Java applications.</description>
-    <url>https://github.com/wavefrontHQ/wavefront-jersey-sdk</url>
+    <url>https://github.com/wavefrontHQ/wavefront-jersey-sdk-java</url>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -19,10 +19,19 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Sushant Dewan</name>
+            <email>sushant@wavefront.com</email>
+            <organization>Wavefront</organization>
+            <organizationUrl>http://www.wavefront.com</organizationUrl>
+        </developer>
+    </developers>
+
     <scm>
-        <connection>scm:git:git@github.com:wavefrontHQ/wavefront-jersey-sdk.git</connection>
-        <developerConnection>scm:git:git@github.com:wavefrontHQ/wavefront-jersey-sdk.git</developerConnection>
-        <url>git@github.com:wavefrontHQ/wavefront-jersey-sdk.git</url>
+        <connection>scm:git:git@github.com:wavefrontHQ/wavefront-jersey-sdk-java.git</connection>
+        <developerConnection>scm:git:git@github.com:wavefrontHQ/wavefront-jersey-sdk-java.git</developerConnection>
+        <url>git@github.com:wavefrontHQ/wavefront-jersey-sdk-java.git</url>
     </scm>
 
     <distributionManagement>
@@ -45,6 +54,17 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
                 </configuration>
             </plugin>
         </plugins>
@@ -113,5 +133,75 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <gpg.useagent>true</gpg.useagent>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <useAgent>true</useAgent>
+                                </configuration>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.3</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
