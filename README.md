@@ -1,4 +1,4 @@
-# Wavefront Jersey SDK
+# Wavefront Jersey SDK [![build status][ci-img]][ci] [![Released Version][maven-img]][maven]
 
 The Wavefront for VMware Jersey SDK for Java is a library that collects out-of-the-box metrics, histograms and (optionally) traces from your Jersey-based microservices application, and reports the data to Wavefront. You can analyze the data in [Wavefront](https://www.wavefront.com) to better understand how your application is performing in production.
 
@@ -11,9 +11,11 @@ If you are using Maven, add the following maven dependency to your pom.xml:
 <dependency>
     <groupId>com.wavefront</groupId>
     <artifactId>wavefront-jersey-sdk-java</artifactId>
-    <version>0.9.0</version>
+    <version>$releaseVersion</version>
 </dependency>
 ```
+
+Replace `$releaseVersion` with the latest version available on [maven](http://search.maven.org/#search%7Cga%7C1%7Cwavefront-jersey-sdk-java).
 
 ## Setup Steps
 
@@ -53,18 +55,18 @@ For each web service in your Jersey application:
       location: "Palo-Alto"
       env: "production"
     ```
-    **Note:** 
+    **Note:**
     * `application` is required. Use the same value for all microservices in the same application.
     * `service` is required. Use a unique value for each microservice in the application.  
     * `cluster`, `shard` and `customTags` are optional and can be omitted.
 
 ### 2. Configure Wavefront Reporting
 
-You can choose to report out-of-the-box metrics, histograms, and traces to Wavefront either through a Wavefront proxy or through direct ingestion. 
+You can choose to report out-of-the-box metrics, histograms, and traces to Wavefront either through a Wavefront proxy or through direct ingestion.
 
 **Option 1 - Send Data to a Wavefront Proxy**
 
-Make sure your Wavefront proxy is [installed](http://docs-beta.wavefront.com/proxies_installing.html) and [configured to listen on ports](http://docs-beta.wavefront.com/tracing_instrumenting_frameworks.html#step-1-prepare-to-send-data-to-wavefront) for metrics, histogram distributions, and trace data. 
+Make sure your Wavefront proxy is [installed](http://docs-beta.wavefront.com/proxies_installing.html) and [configured to listen on ports](http://docs-beta.wavefront.com/tracing_instrumenting_frameworks.html#step-1-prepare-to-send-data-to-wavefront) for metrics, histogram distributions, and trace data.
 
 For each web service in your Jersey application:
 1. Create a `wf-reporting-config.yaml` configuration file.
@@ -100,9 +102,9 @@ For each web service in your Jersey application:
     source: "<replace-with-reporting-source>"
     reportTraces: true
     ```
-    **Notes:** 
-    * Set `server` to the URL for your Wavefront instance, typically `https://myCompany.wavefront.com`. 
-    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.
+    **Notes:**
+    * Set `server` to the URL for your Wavefront instance, typically `https://myCompany.wavefront.com`.
+    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token).
     * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
     * Optionally set `reportTraces` to false if you want to suppress trace data.
 
@@ -137,3 +139,8 @@ See the [metrics documentation](https://github.com/wavefrontHQ/wavefront-jersey-
 
 ## Cross Process Context Propagation
 See the [tracing documentation](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#cross-process-context-propagation) for details on propagating span contexts across process boundaries.
+
+[ci-img]: https://travis-ci.com/wavefrontHQ/wavefront-jersey-sdk-java.svg?branch=master
+[ci]: https://travis-ci.com/wavefrontHQ/wavefront-jersey-sdk-java
+[maven-img]: https://img.shields.io/maven-central/v/com.wavefront/wavefront-jersey-sdk-java.svg?maxAge=2592000
+[maven]: http://search.maven.org/#search%7Cga%7C1%7Cwavefront-jersey-sdk-java
