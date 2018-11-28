@@ -1,8 +1,11 @@
 # Configuring Springboot
 
-Once you have created a [WavefrontJerseyFilter](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#5-create-wavefrontjerseyfilter), register it in your springboot application as follows:
+After you create a `WavefrontJerseyFilter` (using [quickstart steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#3-create-and-register-a-wavefrontjerseyfilter) or [custom steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#5-create-and-register-a-wavefrontjerseyfilter)), you must register it in your Spring Boot application.
 
-Include the `spring-boot-starter-jersey` as a maven dependency and then add a @Bean of type `ResourceConfig` where you register all the endpoints as shown in the example below:
+To register a `WavefrontJerseyFilter` in a Spring Boot application:
+
+1. Include `spring-boot-starter-jersey` as a Maven dependency.
+2. Add a @Bean of type `ResourceConfig` where you register all the endpoints, as shown in the following example:
 
 ```java
 @Component
@@ -11,8 +14,8 @@ public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
                 ...
                 ...
-                // Create the filter as specified in the link above
-                WavefrontJerseyFilter wfJerseyFilter = buildJerseyFilter();
+                // Create the filter 
+                WavefrontJerseyFilter wfJerseyFilter = buildJerseyFilter();  // pseudocode
 
                 // register WavefrontJerseyFilter
                 register(wavefrontJerseyFilter);
@@ -25,4 +28,4 @@ public class JerseyConfig extends ResourceConfig {
 }
 ```
 
-See the [springboot documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html#boot-features-jersey) for further details on Jersey filters.
+See the [Spring Boot documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html#boot-features-jersey) for further details on Jersey filters.
