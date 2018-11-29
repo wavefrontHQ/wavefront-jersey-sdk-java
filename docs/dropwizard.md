@@ -1,6 +1,6 @@
 # Registering a WavefrontJerseyFilter with Dropwizard
 
-After you create a `WavefrontJerseyFilter` (using [quickstart steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#3-create-and-register-a-wavefrontjerseyfilter) or [custom steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#5-create-and-register-a-wavefrontjerseyfilter)), you must register it with your application's Dropwizard environment. 
+After you create a `WavefrontJerseyFilter` (using [quickstart steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#3-create-and-register-a-wavefrontjerseyfilter) or [custom steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/custom.md#5-create-and-register-a-wavefrontjerseyfilter)), you must register it with your application's Dropwizard environment. 
  
 
 To register a `WavefrontJerseyFilter` in a Dropwizard application:
