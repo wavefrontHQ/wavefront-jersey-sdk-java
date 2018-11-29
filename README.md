@@ -104,7 +104,7 @@ For each web service in your Jersey application:
     ```
     **Notes:**
     * Set `server` to the URL for your Wavefront instance, typically `https://myCompany.wavefront.com`.
-    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token).
+    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.
     * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
     * Optionally set `reportTraces` to false if you want to suppress trace data.
 
@@ -131,11 +131,11 @@ In the code for each web service in your Jersey application:
 
 ### 4. Create and Register a WavefrontJaxrsClientFilter (Optional)
 
-_Ignore this section if you are collecting metrics and histograms (without trace data) from your application._
+_Ignore this section if you are collecting only metrics and histograms (without trace data) from your application._
 
 In the code for each web service that is a JAX-RS-based client: 
 
-1. Use the factory you built in the [previous section](#create-and-register-a-wavefrontjerseyfilter) to create a  [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java): 
+1. Use the factory you built in the [previous section](#3-create-and-register-a-wavefrontjerseyfilter) to create a  [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java): 
 
     ```java
     // Instantiate the WavefrontJaxrsClientFilter

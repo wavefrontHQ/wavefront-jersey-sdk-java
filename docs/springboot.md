@@ -1,11 +1,11 @@
-# Configuring Springboot
+# Registering a WavefrontJerseyFilter with Spring Boot
 
-After you create a `WavefrontJerseyFilter` (using [quickstart steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#3-create-and-register-a-wavefrontjerseyfilter) or [custom steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#5-create-and-register-a-wavefrontjerseyfilter)), you must register it in your Spring Boot application.
+After you create a `WavefrontJerseyFilter` (using [quickstart steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#3-create-and-register-a-wavefrontjerseyfilter) or [custom steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/custom.md#5-create-and-register-a-wavefrontjerseyfilter)), you must register it in your Spring Boot application.
 
 To register a `WavefrontJerseyFilter` in a Spring Boot application:
 
 1. Include `spring-boot-starter-jersey` as a Maven dependency.
-2. Add a @Bean of type `ResourceConfig` where you register all the endpoints, as shown in the following example:
+2. Add a `@Bean` of type `ResourceConfig` where you register all the endpoints, as shown in the following example:
 
 ```java
 @Component
