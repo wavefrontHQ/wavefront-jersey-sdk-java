@@ -12,8 +12,8 @@ For each service that uses a Jersey-compliant framework, [add the dependency](#m
 2. [Create a `WavefrontSender`](#2-set-up-a-wavefrontsender) for sending data to Wavefront.
 3. [Create a `WavefrontJerseyReporter`](#3-create-a-wavefrontjerseyreporter) for reporting Jersey metrics and histograms to Wavefront.
 4. *Optional*. [Create a `WavefrontTracer`](#4-set-up-a-wavefronttracer-optional) for reporting trace data from Jersey APIs to Wavefront.
-5. [Create and register a `WavefrontJerseyFilter`](#3-create-and-register-a-wavefrontjerseyfilter).
-6. *If you created a `WavefrontTracer` in step 4,* create and register a `WavefrontJaxrsClientFilter`.
+5. [Create and register a `WavefrontJerseyFilter`](#5-create-and-register-a-wavefrontjerseyfilter).
+6. *If you created a `WavefrontTracer` in step 4,* [create and register a `WavefrontJaxrsClientFilter`](#6-create-and-register-a-wavefrontjaxrsclientfilter).
 
 For the details of each step, see the sections below.
 
@@ -24,11 +24,11 @@ You encapsulate application tags in an `ApplicationTags` object. See [Instantiat
 
 ### 2. Set Up a WavefrontSender
 
-A `WavefrontSender` object implements the low-level interface for sending data to Wavefront. 
+A `WavefrontSender` object implements the low-level interface for sending data to Wavefront. You can choose to send data using either the [Wavefront proxy](https://docs.wavefront.com/proxies.html) or [direct ingestion](https://docs.wavefront.com/direct_ingestion.html).
 
 * If you have already set up a `WavefrontSender` for another SDK that will run in the same JVM, use that one.  (For details about sharing a `WavefrontSender` instance, see [Share a WavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/sender.md#share-a-wavefrontsender).)
 
-* Otherwise, follow the steps in [Set Up a WavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/sender.md#set-up-a-wavefrontsender) to send data using either the [Wavefront proxy](https://docs.wavefront.com/proxies.html) or [direct ingestion](https://docs.wavefront.com/direct_ingestion.html).
+* Otherwise, follow the steps in [Set Up a WavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-java/blob/master/docs/sender.md#set-up-a-wavefrontsender).
 
 The `WavefrontSender` is used by both the `WavefrontJerseyReporter` and the optional `WavefrontTracer`.
 
@@ -36,8 +36,8 @@ The `WavefrontSender` is used by both the `WavefrontJerseyReporter` and the opti
 A `WavefrontJerseyReporter` object reports metrics and histograms to Wavefront.
 
 To build a `WavefrontJerseyReporter`, you must specify:
-* An `ApplicationTags` object ([see above](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#1-set-up-application-tags))
-* A `WavefrontSender` object ([see above](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#2-set-up-a-wavefrontsender)).
+* An `ApplicationTags` object ([see above](#1-set-up-application-tags))
+* A `WavefrontSender` object ([see above](2-set-up-a-wavefrontsender)).
 
 You can optionally specify:
 * A nondefault source for the reported data. If you omit the source, the host name is automatically used.
@@ -63,7 +63,7 @@ WavefrontJerseyReporter wfJerseyReporter = wfJerseyReporterBuilder.build(wavefro
 You can optionally configure the `WavefrontTracer` to create and send trace data from your Jersey application to Wavefront.
 
 To build a `WavefrontTracer`, you must specify:
-* The `ApplicationTags` object ([see above](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#1-set-up-application-tags)).
+* The `ApplicationTags` object ([see above](#1-set-up-application-tags)).
 * A `WavefrontSpanReporter` for reporting trace data to Wavefront. See [Create a WavefrontSpanReporter](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#create-a-wavefrontspanreporter) for details.
   **Note:** When you create the `WavefrontSpanReporter`, you should instantiate it with the same source name and `WavefrontSender` that you used to create the `WavefrontJerseyReporter` earlier on this page.
 
@@ -77,7 +77,6 @@ Tracer wavefrontTracer = new WavefrontTracer.Builder(wavefrontSpanReporter, appl
 ### 5. Create and Register a WavefrontJerseyFilter
 
 A  `WavefrontJerseyFilter` collects HTTP request/response metrics, histograms, and server-side trace data. 
-
 
 1. Build a `WavefrontJerseyFilter`. Specify the `ApplicationTags`,  `WavefrontSpanReporter`, and optional `WavefrontTracer` objects you created above:
 
@@ -101,7 +100,7 @@ A  `WavefrontJerseyFilter` collects HTTP request/response metrics, histograms, a
 
 ### 6. Create and Register a WavefrontJaxrsClientFilter
 
-_Ignore this section if you want to collect metrics and histograms only (no trace data)._ 
+_Ignore this section if you want to collect only metrics and histograms (no trace data)._ 
 
 A [`WavefrontJaxrsClientFilter`](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java) enables an instrumented client-side service to propagate trace information when sending a request to another service. 
 The `WavefrontJaxrsClientFilter` supplements the `WavefrontJerseyFilter`, which  creates server-side trace data, but not client-side trace data. 
