@@ -1,6 +1,9 @@
-# Configuring Dropwizard
+# Registering a WavefrontJerseyFilter with Dropwizard
 
-Once you have created a [WavefrontJerseyFilter](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#5-create-wavefrontjerseyfilter), register it in your dropwizard application as follows:
+After you create a `WavefrontJerseyFilter` (using [quickstart steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#3-create-and-register-a-wavefrontjerseyfilter) or [custom steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java#5-create-and-register-a-wavefrontjerseyfilter)), you must register it with your application's Dropwizard environment. 
+ 
+
+To register a `WavefrontJerseyFilter` in a Dropwizard application:
 
 ```java
 public class MyApplication extends Application<MyConfiguration>{
@@ -8,10 +11,10 @@ public class MyApplication extends Application<MyConfiguration>{
     public void run(MyApplicationConfiguration configuration, Environment environment) {
         ...
         ...
-        // Create the filter as specified in the link above
-        WavefrontJerseyFilter wfJerseyFilter = buildJerseyFilter();
+        // Create the filter 
+        WavefrontJerseyFilter wfJerseyFilter = buildJerseyFilter();  // pseudocode
 
-        // Register the filter with Dropwizard Jersey Environment
+        // Register the filter with Dropwizard Jersey environment
         environment.jersey().register(wfJerseyFilter);
         ...
         ...
@@ -19,4 +22,4 @@ public class MyApplication extends Application<MyConfiguration>{
 }
 ```
 
-See the [dropwizard documentation](https://www.dropwizard.io/0.7.1/docs/manual/core.html#jersey-filters) for further details on Jersey filters.
+See the [Dropwizard documentation](https://www.dropwizard.io/0.7.1/docs/manual/core.html#jersey-filters) for further details on Jersey filters.

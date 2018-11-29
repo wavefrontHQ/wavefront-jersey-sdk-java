@@ -23,18 +23,18 @@ Choose the setup option that best fits your use case.
 
 * [**Option 1: Quickstart**](#quickstart) - Use configuration files, plus a few code changes, to quickly instrument the Jersey framework and the JVM in your microservice. Default settings are used.
 
-* [**Option 2: Custom Setup**](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/custom.md) - Instantiate helper objects in your code for complete control over all settable aspects of instrumenting the Jersey framework in a microservice. Appropriate for Wavefront power users.
+* [**Option 2: Custom Setup**](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/blob/master/docs/custom.md) - Instantiate helper objects in your code for control over all settable aspects of instrumentation. Appropriate for Wavefront power users.
 
 ## Quickstart
 
-Follow the steps below to quickly set up a `WavefrontJerseyFilter` for collecting HTTP request/response metrics and histograms. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work.
+Follow the steps below to quickly set up a `WavefrontJerseyFilter` for collecting HTTP request/response metrics, histograms, and trace data. See the [Jersey documentation](https://jersey.github.io/documentation/latest/filters-and-interceptors.html) to understand how filters work. 
 
 For each service that uses a Jersey-compliant framework, [add the dependency](#maven) if you have not already done so, and then perform the following steps:
 
-1. Configure a set of application tags to describe your application to Wavefront.
-2. Configure how out-of-the-box metrics, histograms and traces are reported to Wavefront.
-3. Create a `WavefrontJerseyFilter` object.
-4. Register the `WavefrontJerseyFilter` object.
+1. [Configure a set of application tags](#1-configure-application-tags) to describe your application to Wavefront.
+2. [Configure how to report](#2-configure-wavefront-reporting) out-of-the-box metrics, histograms and trace data to Wavefront.
+3. [Create and register a `WavefrontJerseyFilter`](#3-create-and-register-a-wavefrontjerseyfilter) object.
+4. *Optional*. [Create and register a `WavefrontJaxrsClientFilter`](#4-create-and-register-a-wavefrontjaxrsclientfilter-optional) object.
 
 For the details of each step, see the sections below.
 
@@ -108,37 +108,57 @@ For each web service in your Jersey application:
     * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
     * Optionally set `reportTraces` to false if you want to suppress trace data.
 
-### 3. Create a WavefrontJerseyFilter
+### 3. Create and Register a WavefrontJerseyFilter
 
 In the code for each web service in your Jersey application:
-* Instantiate a `WavefrontJerseyFilter` object. Pass in the path names of the configuration files you created above.
+
+1. Instantiate a `WavefrontJerseyFactory`. Pass in the path names of the configuration files you created above.
     ```java
-    // Instantiate the WavefrontJerseyFilter
+    // Instantiate the WavefrontJerseyFactory
     WavefrontJerseyFactory wavefrontJerseyFactory = new WavefrontJerseyFactory(
         applicationTagsYamlFile, wfReportingConfigYamlFile);
-    WavefrontJerseyFilter wavefrontJerseyFilter = wavefrontJerseyFactory.getWavefrontJerseyFilter();
     ```
+2. Use the factory to create a `WavefrontJerseyFilter`:
+    ```java
+    // Create the WavefrontJerseyFilter
+    WavefrontJerseyFilter wavefrontJerseyFilter
+        wavefrontJerseyFactory.getWavefrontJerseyFilter();
+    ```
+3. Register the `WavefrontJerseyFilter` according to the framework used by the service:
+    * [Dropwizard registration steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/dropwizard.md)
+    * [Spring Boot registration steps](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/springboot.md)
 
-* *Optional*: You can also get [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java) from the `WavefrontJerseyFactory` for instrumenting your JAX-RS-based client to form a complete trace.
 
-* ```java
+### 4. Create and Register a WavefrontJaxrsClientFilter (Optional)
+
+_Ignore this section if you are collecting metrics and histograms (without trace data) from your application._
+
+In the code for each web service that is a JAX-RS-based client: 
+
+1. Use the factory you built in the [previous section](#create-and-register-a-wavefrontjerseyfilter) to create a  [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java): 
+
+    ```java
     // Instantiate the WavefrontJaxrsClientFilter
     WavefrontJaxrsClientFilter wavefrontJaxrsClientFilter = wavefrontJerseyFactory.
         getWavefrontJaxrsClientFilter();
     ```
 
-### 4. Register the WavefrontJerseyFilter
-After you create the WavefrontJerseyFilter, you must register it. How you do this varies based on the framework you are instrumenting:
+2. Register the `WavefrontJaxrsClientFilter`:
 
-* See [dropwizard.md](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/dropwizard.md) for registering in a dropwizard based application.
-* See [springboot.md](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/springboot.md) for registering in a springboot based application.
+    ```Java
+    // Assumes a JAX-RS-compliant ClientBuilder instance
+    clientBuilder.register(filter);
+    ```
+
+**Notes:** 
+* The `WavefrontJaxrsClientFilter` enables an instrumented client service to propagate trace information when sending a request to another service. 
+* The `WavefrontJaxrsClientFilter` supplements the `WavefrontJerseyFilter`, which  creates server-side trace data, but not client-side trace data. 
+
 
 ## Metrics and Histograms Sent From Jersey Operations
 
 See the [metrics documentation](https://github.com/wavefrontHQ/wavefront-jersey-sdk-java/tree/master/docs/metrics.md) for details on the out of the box metrics and histograms collected by this SDK and reported to Wavefront.
 
-## Cross Process Context Propagation
-See the [tracing documentation](https://github.com/wavefrontHQ/wavefront-opentracing-sdk-java#cross-process-context-propagation) for details on propagating span contexts across process boundaries.
 
 [ci-img]: https://travis-ci.com/wavefrontHQ/wavefront-jersey-sdk-java.svg?branch=master
 [ci]: https://travis-ci.com/wavefrontHQ/wavefront-jersey-sdk-java
