@@ -131,11 +131,11 @@ In the code for each web service in your Jersey application:
 
 ### 4. Create and Register a WavefrontJaxrsClientFilter (Optional)
 
-_Ignore this section if you are collecting metrics and histograms (without trace data) from your application._
+_Ignore this section if you are collecting only metrics and histograms (without trace data) from your application._
 
 In the code for each web service that is a JAX-RS-based client: 
 
-1. Use the factory you built in the [previous section](#create-and-register-a-wavefrontjerseyfilter) to create a  [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java): 
+1. Use the factory you built in the [previous section](#3-create-and-register-a-wavefrontjerseyfilter) to create a  [WavefrontJaxrsClientFilter](https://github.com/wavefrontHQ/wavefront-jaxrs-sdk-java): 
 
     ```java
     // Instantiate the WavefrontJaxrsClientFilter
