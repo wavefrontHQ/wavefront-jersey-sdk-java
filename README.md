@@ -55,18 +55,51 @@ For each web service in your Jersey application:
       location: "Palo-Alto"
       env: "production"
     ```
-    **Note:**
-    * `application` is required. Use the same value for all microservices in the same application.
-    * `service` is required. Use a unique value for each microservice in the application.  
-    * `cluster`, `shard` and `customTags` are optional and can be omitted.
+    **Notes:**
+
+    | YAML Property | Description |
+    | ---- | ---- |
+    | `application`  |  Required. Name that identifies your application. Use the same value for all microservices in the same application.|
+    | `service` | Required. Name that identifies the microservice within your application. Use a unique value for each microservice.  |
+    | `cluster` | Optional. Name of a group of related hosts that serves as a cluster or region in which the application will run. |
+    | `shard` | Optional. Name of a subgroup of hosts within a cluster. |
+    | `customTags` | Optional. Tags specific to your application. |
 
 ### 2. Configure Wavefront Reporting
 
-You can choose to report out-of-the-box metrics, histograms, and traces to Wavefront either through a Wavefront proxy or through direct ingestion.
+You can choose to report out-of-the-box metrics, histograms, and traces to Wavefront using one of the following techniques:
+* Use [direct ingestion](https://docs.wavefront.com/direct_ingestion.html) to send the data directly to the Wavefront service. This is the simplest way to get up and running quickly. See [Option 1](#option-1-send-data-directly-to-wavefront).
+* Use a [Wavefront proxy](https://docs.wavefront.com/proxies.html), which then forwards the data to the Wavefront service. This is the recommended choice for a large-scale deployment that needs resilience to internet outages, control over data queuing and filtering, and more. See [Option 2](#option-2-send-data-to-a-wavefront-proxy).
 
-**Option 1 - Send Data to a Wavefront Proxy**
 
-Make sure your Wavefront proxy is [installed](http://docs-beta.wavefront.com/proxies_installing.html) and [configured to listen on ports](http://docs-beta.wavefront.com/tracing_instrumenting_frameworks.html#step-1-prepare-to-send-data-to-wavefront) for metrics, histogram distributions, and trace data.
+#### Option 1 - Send Data Directly to Wavefront
+
+For each web service in your Jersey application:
+1. Create a `wf-reporting-config.yaml` configuration file.
+2. Edit the file to add properties and values such as the following:
+    ```
+    # Reporting through direct ingestion
+    reportingMechanism: "direct"
+    server: "<replace-with-wavefront-url>"
+    token: "<replace-with-wavefront-api-token>"
+    source: "<replace-with-reporting-source>"
+    reportTraces: true
+    ```
+    **Notes:**
+
+    | YAML Property | Value |
+    | ---- | ---- |
+    | `reportingMechanism`  |  `direct` |
+    |  `server` | URL for your Wavefront instance, typically `https://myCompany.wavefront.com` | 
+    | `token` | String produced by [obtaining an API token](http://docs.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.  |  
+    | `source`  | String that represents where the data originates -- typically the host name of the machine running the microservice.  |  
+    | `reportTraces`  | `true` to include trace data. `false` to suppress trace data.  |  
+
+
+#### Option 2 - Send Data to a Wavefront Proxy
+
+**Note:** Before your application can send data, you must [set up and start a Wavefront proxy](https://github.com/wavefrontHQ/java/tree/master/proxy#set-up-a-wavefront-proxy) on a host that the application can access.
+
 
 For each web service in your Jersey application:
 1. Create a `wf-reporting-config.yaml` configuration file.
@@ -82,31 +115,18 @@ For each web service in your Jersey application:
     reportTraces: true
     ```
     **Notes:**  
-    * The proxy port properties above must match the corresponding properties in the proxy configuration file (`wavefront.conf`):
-      * Set `proxyMetricsPort` to the same value as `pushListenerPort`.
-      * Set `proxyDistributionsPort` to the same value as `histogramDistListenerPort`.
-      * Set `proxyTracingPort` to the same value as `traceListenerPort`.
-    * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
-    * Optionally set `reportTraces` to false if you want to suppress trace data.
+    When you [set up a Wavefront proxy](https://github.com/wavefrontHQ/java/tree/master/proxy#set-up-a-wavefront-proxy) on the specified proxy host, you specify the port it will listen to for each type of data to be sent. The proxy port properties in the YAML file must specify the same port numbers as the corresponding properties in the proxy configuration file (`wavefront.conf`):
 
-**Option 2 - Send Data Directly to Wavefront**
 
-For each web service in your Jersey application:
-1. Create a `wf-reporting-config.yaml` configuration file.
-2. Edit the file to add properties and values such as the following:
-    ```
-    # Reporting through direct ingestion
-    reportingMechanism: "direct"
-    server: "<replace-with-wavefront-url>"
-    token: "<replace-with-wavefront-api-token>"
-    source: "<replace-with-reporting-source>"
-    reportTraces: true
-    ```
-    **Notes:**
-    * Set `server` to the URL for your Wavefront instance, typically `https://myCompany.wavefront.com`.
-    * Set `token` to the string produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.
-    * Set `source` to a string that represents where the data originates -- typically the host name of the machine running the microservice.
-    * Optionally set `reportTraces` to false if you want to suppress trace data.
+    | YAML Property | Value |
+    | ---- | ---- |
+    | `reportingMechanism`  |  `proxy` | 
+    | `proxyHost`  | String name or IP address of the host on which you set up the Wavefront proxy.  |  
+    |  `proxyMetricsPort` | Proxy port to send metrics to. Default is 2878. Must match the value set for `pushListenerPort=` in `wavefront.conf`. | 
+    | `proxyDistributionsPort` | Proxy port to send histograms to.  Recommended value is 40000. Must match the value set for  `histogramDistListenerPort=` in `wavefront.conf`. |  
+    |  `proxyTracingPort` | Proxy port to send trace data to. Recommended value is 30000. Must match the value set for `traceListenerPort=` in `wavefront.conf`.  |  
+    | `source`  | String that represents where the data originates -- typically, the host name of the machine running the microservice.  |  
+    | `reportTraces`  | `true` to include trace data. `false` to suppress trace data.  |  
 
 ### 3. Create and Register a WavefrontJerseyFilter
 
