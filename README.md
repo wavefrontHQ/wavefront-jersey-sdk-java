@@ -55,10 +55,15 @@ For each web service in your Jersey application:
       location: "Palo-Alto"
       env: "production"
     ```
-    **Note:**
-    * `application` is required. Use the same value for all microservices in the same application.
-    * `service` is required. Use a unique value for each microservice in the application.  
-    * `cluster`, `shard` and `customTags` are optional and can be omitted.
+    **Notes:**
+
+    | YAML Property | Description |
+    | ---- | ---- |
+    | `application`  |  Required. Name that identifies your application. Use the same value for all microservices in the same application.|
+    | `service` | Required. Name that identifies the microservice within your application. Use a unique value for each microservice.  |
+    | `cluster` | Optional. Name of a group of related hosts that serves as a cluster or region in which the application will run. |
+    | `shard` | Optional. Name of a subgroup of hosts within a cluster. |
+    | `customTags` | Optional. Tags specific to your application. |
 
 ### 2. Configure Wavefront Reporting
 
@@ -86,7 +91,7 @@ For each web service in your Jersey application:
     | ---- | ---- |
     | `reportingMechanism`  |  `direct` |
     |  `server` | URL for your Wavefront instance, typically `https://myCompany.wavefront.com` | 
-    | `token` | String produced by [obtaining an API token](http://docs-beta.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.  |  
+    | `token` | String produced by [obtaining an API token](http://docs.wavefront.com/wavefront_api.html#generating-an-api-token). You must have Direct Data Ingestion permission when you obtain the token.  |  
     | `source`  | String that represents where the data originates -- typically the host name of the machine running the microservice.  |  
     | `reportTraces`  | `true` to include trace data. `false` to suppress trace data.  |  
 
