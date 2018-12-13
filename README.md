@@ -68,8 +68,8 @@ For each web service in your Jersey application:
 ### 2. Configure Wavefront Reporting
 
 You can choose to report out-of-the-box metrics, histograms, and traces to Wavefront using one of the following techniques:
-* Use [direct ingestion](https://docs.wavefront.com/direct_ingestion.html) to send the data directly to the Wavefront service. This is the simplest way to get up and running quickly. See [Option 1](#option-1-send-data-directly-to-wavefront).
-* Use a [Wavefront proxy](https://docs.wavefront.com/proxies.html), which then forwards the data to the Wavefront service. This is the recommended choice for a large-scale deployment that needs resilience to internet outages, control over data queuing and filtering, and more. See [Option 2](#option-2-send-data-to-a-wavefront-proxy).
+* Use [direct ingestion](https://docs.wavefront.com/direct_ingestion.html) to send the data directly to the Wavefront service. This is the simplest way to get up and running quickly. See [Option 1](#option-1---send-data-directly-to-wavefront).
+* Use a [Wavefront proxy](https://docs.wavefront.com/proxies.html), which then forwards the data to the Wavefront service. This is the recommended choice for a large-scale deployment that needs resilience to internet outages, control over data queuing and filtering, and more. See [Option 2](#option-2---send-data-to-a-wavefront-proxy).
 
 
 #### Option 1 - Send Data Directly to Wavefront
@@ -98,7 +98,7 @@ For each web service in your Jersey application:
 
 #### Option 2 - Send Data to a Wavefront Proxy
 
-**Note:** Before your application can send data, you must [set up and start a Wavefront proxy](https://github.com/wavefrontHQ/java/tree/master/proxy#set-up-a-wavefront-proxy) on a host that the application can access.
+**Note:** Before your application can send data, you must [set up a Wavefront proxy](https://github.com/wavefrontHQ/java/tree/master/proxy#set-up-a-wavefront-proxy) on a host that the application can access.
 
 
 For each web service in your Jersey application:
