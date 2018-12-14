@@ -11,8 +11,6 @@ import com.wavefront.sdk.jersey.reporter.WavefrontJerseyReporter;
 
 import org.apache.commons.lang3.BooleanUtils;
 
-import java.io.IOException;
-
 import io.opentracing.Tracer;
 
 import static com.wavefront.config.ReportingUtils.constructApplicationTags;
@@ -67,12 +65,7 @@ public class WavefrontJerseyFactory {
       // Step 6 - Optionally create a WavefrontTracer for reporting trace data
       // from Jersey APIs to Wavefront.
       WavefrontSpanReporter wfSpanReporter;
-      try {
-        wfSpanReporter = new WavefrontSpanReporter.Builder().
-            withSource(source).build(wavefrontSender);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      wfSpanReporter = new WavefrontSpanReporter.Builder().withSource(source).build(wavefrontSender);
       tracer = new WavefrontTracer.Builder(wfSpanReporter, applicationTags).build();
       wfJerseyFilterBuilder.withTracer(tracer);
     } else {
