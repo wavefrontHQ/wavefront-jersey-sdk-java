@@ -360,19 +360,24 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
        * 1) jersey.server.response.api.v2.alert.summary.GET.200.latency
        * 2) jersey.server.response.api.v2.alert.summary.GET.200.cpu_ns
        */
-      long cpuNanos = ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime() -
-          startTimeCpuNanos.get();
-      wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".cpu_ns",
-          completeTagsMap), cpuNanos);
+      Long startTimeNs = startTimeCpuNanos.get();
+      if (startTimeNs != null) {
+        long cpuNanos = ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime() - startTimeNs;
+        wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".cpu_ns",
+                completeTagsMap), cpuNanos);
+      }
 
-      long apiLatency = System.currentTimeMillis() - startTime.get();
-      wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".latency",
-              completeTagsMap), apiLatency);
-      /**
-       * total time spent counter: jersey.server.response.api.v2.alert.summary.GET.200.total_time
-       */
-      wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey + ".total_time",
-          completeTagsMap), apiLatency);
+      Long startTimeMs = startTime.get();
+      if (startTimeMs != null) {
+        long apiLatency = System.currentTimeMillis() - startTimeMs;
+        wfJerseyReporter.updateHistogram(new MetricName(responseMetricKey + ".latency",
+                completeTagsMap), apiLatency);
+        /*
+         * total time spent counter: jersey.server.response.api.v2.alert.summary.GET.200.total_time
+         */
+        wfJerseyReporter.incrementCounter(new MetricName(responseMetricKey + ".total_time",
+                completeTagsMap), apiLatency);
+      }
     }
   }
 
