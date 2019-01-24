@@ -122,9 +122,9 @@ For each web service in your Jersey application:
     | ---- | ---- |
     | `reportingMechanism`  |  `proxy` | 
     | `proxyHost`  | String name or IP address of the host on which you set up the Wavefront proxy.  |  
-    |  `proxyMetricsPort` | Proxy port to send metrics to. Default is 2878. Must match the value set for `pushListenerPort=` in `wavefront.conf`. | 
-    | `proxyDistributionsPort` | Proxy port to send histograms to.  Recommended value is 40000. Must match the value set for  `histogramDistListenerPort=` in `wavefront.conf`. |  
-    |  `proxyTracingPort` | Proxy port to send trace data to. Recommended value is 30000. Must match the value set for `traceListenerPort=` in `wavefront.conf`.  |  
+    |  `proxyMetricsPort` | Proxy port to send metrics to. Default is 2878. Must match the value set for `pushListenerPorts=` in `wavefront.conf`. | 
+    | `proxyDistributionsPort` | Proxy port to send histograms to.  Recommended value is 40000. Must match the value set for  `histogramDistListenerPorts=` in `wavefront.conf`. |  
+    |  `proxyTracingPort` | Proxy port to send trace data to. Recommended value is 30000. Must match the value set for `traceListenerPorts=` in `wavefront.conf`.  |  
     | `source`  | String that represents where the data originates -- typically, the host name of the machine running the microservice.  |  
     | `reportTraces`  | `true` to include trace data. `false` to suppress trace data.  |  
 
