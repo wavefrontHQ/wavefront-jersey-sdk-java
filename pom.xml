@@ -73,23 +73,8 @@
     <dependencies>
         <dependency>
             <groupId>com.wavefront</groupId>
-            <artifactId>wavefront-internal-reporter-java</artifactId>
-            <version>0.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wavefront</groupId>
-            <artifactId>wavefront-runtime-sdk-jvm</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wavefront</groupId>
-            <artifactId>wavefront-opentracing-sdk-java</artifactId>
-            <version>0.9.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wavefront</groupId>
             <artifactId>wavefront-jaxrs-sdk-java</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
