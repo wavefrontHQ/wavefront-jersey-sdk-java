@@ -11,6 +11,7 @@ import com.wavefront.sdk.entities.metrics.WavefrontMetricSender;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +46,7 @@ public class WavefrontJerseyReporter implements SdkReporter {
     this.wfReporter = wfReporter;
     this.reportingIntervalSeconds = reportingIntervalSeconds;
     heartbeaterService = new HeartbeaterService(wavefrontMetricSender, applicationTags,
-            JERSEY_SERVER_COMPONENT, source);
+        Collections.singletonList(JERSEY_SERVER_COMPONENT), source);
   }
 
   @Override
