@@ -75,14 +75,7 @@ public class WavefrontJerseyFactory {
     // Step 7 - Start the Jersey reporter to report metrics and histograms
     wfJerseyReporter.start();
 
-    // Step 8 - Create WavefrontJvmReporter.Builder using applicationTags
-    this.wfJvmReporter = new WavefrontJvmReporter.Builder(applicationTags).
-        withSource(source).build(wavefrontSender);
-
-    // Step 9 - Start the JVM reporter to report JVM metrics
-    wfJvmReporter.start();
-
-    // Step 10 - Construct the filter that you should register with your Jersey based application.
+    // Step 8 - Construct the filter that you should register with your Jersey based application.
     this.wavefrontJerseyFilter = wfJerseyFilterBuilder.build();
 
     this.wavefrontJaxrsClientFilter = new WavefrontJaxrsClientFilter(wavefrontSender,
