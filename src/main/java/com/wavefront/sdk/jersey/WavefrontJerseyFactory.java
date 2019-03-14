@@ -3,7 +3,6 @@ package com.wavefront.sdk.jersey;
 import com.wavefront.config.WavefrontReportingConfig;
 import com.wavefront.opentracing.WavefrontTracer;
 import com.wavefront.opentracing.reporting.WavefrontSpanReporter;
-import com.wavefront.sdk.appagent.jvm.reporter.WavefrontJvmReporter;
 import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.jaxrs.client.WavefrontJaxrsClientFilter;
@@ -30,7 +29,6 @@ public class WavefrontJerseyFactory {
   private final Tracer tracer;
   private final WavefrontSender wavefrontSender;
   private final WavefrontJerseyReporter wfJerseyReporter;
-  private final WavefrontJvmReporter wfJvmReporter;
   private final WavefrontJerseyFilter wavefrontJerseyFilter;
   private final WavefrontJaxrsClientFilter wavefrontJaxrsClientFilter;
 
@@ -108,10 +106,6 @@ public class WavefrontJerseyFactory {
 
   public WavefrontJerseyReporter getWavefrontJerseyReporter() {
     return wfJerseyReporter;
-  }
-
-  public WavefrontJvmReporter getWavefrontJvmReporter() {
-    return wfJvmReporter;
   }
 
 }
