@@ -139,7 +139,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String finalMethodName = pair._2;
 
       if (tracer != null) {
-        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalMethodName).
+        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalClassName.substring(
+            finalClassName.lastIndexOf('.') + 1) + "." + finalMethodName).
             withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER).
             withTag("jersey.resource.class", finalClassName).
             withTag("jersey.path", finalMatchingPath);
