@@ -120,7 +120,7 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar.POST.204.cpu_ns", tags)));
 
     // Tracing Span
-    WavefrontSpan span = sampleApp.reportedSpan("barCreate");
+    WavefrontSpan span = sampleApp.reportedSpan("SampleResource.barCreate");
     assertNotNull(span);
     List<Pair<String, String>> expectedTags = new ArrayList<>();
     expectedTags.add(new Pair<>("span.kind", "server"));
@@ -202,7 +202,7 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar._id_.GET.200.cpu_ns", tags)));
 
     // Tracing Span
-    WavefrontSpan span = sampleApp.reportedSpan("barGet");
+    WavefrontSpan span = sampleApp.reportedSpan("SampleResource.barGet");
     assertNotNull(span);
     List<Pair<String, String>> expectedTags = new ArrayList<>();
     expectedTags.add(new Pair<>("span.kind", "server"));
@@ -284,7 +284,7 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar._id_.PUT.204.cpu_ns", tags)));
 
     // Tracing Span
-    WavefrontSpan span = sampleApp.reportedSpan("barUpdate");
+    WavefrontSpan span = sampleApp.reportedSpan("SampleResource.barUpdate");
     assertNotNull(span);
     List<Pair<String, String>> expectedTags = new ArrayList<>();
     expectedTags.add(new Pair<>("span.kind", "server"));
@@ -366,7 +366,7 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar._id_.DELETE.204.cpu_ns", tags)));
 
     // Tracing Span
-    WavefrontSpan span = sampleApp.reportedSpan("barDelete");
+    WavefrontSpan span = sampleApp.reportedSpan("SampleResource.barDelete");
     assertNotNull(span);
     List<Pair<String, String>> expectedTags = new ArrayList<>();
     expectedTags.add(new Pair<>("span.kind", "server"));
@@ -447,7 +447,7 @@ public class JerseyAppReporterTest {
         "response.sample.foo.bar.GET.200.cpu_ns", tags)));
 
     // Tracing Span
-    WavefrontSpan span = sampleApp.reportedSpan("getAll");
+    WavefrontSpan span = sampleApp.reportedSpan("SampleResource.getAll");
     assertNotNull(span);
     List<Pair<String, String>> expectedTags = new ArrayList<>();
     expectedTags.add(new Pair<>("span.kind", "server"));
