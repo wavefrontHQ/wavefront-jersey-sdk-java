@@ -7,14 +7,10 @@ import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.jaxrs.client.WavefrontJaxrsClientFilter;
 import com.wavefront.sdk.jersey.reporter.WavefrontJerseyReporter;
-
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.BooleanUtils;
 
-import io.opentracing.Tracer;
-
-import static com.wavefront.config.ReportingUtils.constructApplicationTags;
-import static com.wavefront.config.ReportingUtils.constructWavefrontReportingConfig;
-import static com.wavefront.config.ReportingUtils.constructWavefrontSender;
+import static com.wavefront.config.ReportingUtils.*;
 
 /**
  * A basic mode to configure Jersey server SDK and report Jersey metrics, histograms and tracing
@@ -31,6 +27,11 @@ public class WavefrontJerseyFactory {
   private final WavefrontJerseyReporter wfJerseyReporter;
   private final WavefrontJerseyFilter wavefrontJerseyFilter;
   private final WavefrontJaxrsClientFilter wavefrontJaxrsClientFilter;
+  private final static String userDir = System.getProperty("user.home");
+
+  public WavefrontJerseyFactory() {
+    this(userDir + "/application-tags.yaml", userDir + "/wf-reporting-config.yaml");
+  }
 
   /**
    * Construct WavefrontJerseyFactory with given yaml files path of application tags and Wavefront
@@ -43,7 +44,7 @@ public class WavefrontJerseyFactory {
 
     // Step 2 - Construct WavefrontReportingConfig
     WavefrontReportingConfig wfReportingConfig =
-        constructWavefrontReportingConfig(wfReportingConfigYamlFile);
+            constructWavefrontReportingConfig(wfReportingConfigYamlFile);
 
     this.source = wfReportingConfig.getSource();
 
@@ -53,11 +54,11 @@ public class WavefrontJerseyFactory {
     // Step 4 - Create a WavefrontJerseyReporter for reporting
     // Jersey metrics and histograms to Wavefront.
     this.wfJerseyReporter = new WavefrontJerseyReporter.Builder
-        (applicationTags).withSource(source).build(wavefrontSender);
+            (applicationTags).withSource(source).build(wavefrontSender);
 
     // Step 5 - Create a WavefrontJerseyFilter.Builder
     WavefrontJerseyFilter.Builder wfJerseyFilterBuilder = new WavefrontJerseyFilter.Builder
-        (wfJerseyReporter, applicationTags);
+            (wfJerseyReporter, applicationTags);
 
     if (BooleanUtils.isTrue(wfReportingConfig.getReportTraces())) {
       // Step 6 - Optionally create a WavefrontTracer for reporting trace data
@@ -77,7 +78,7 @@ public class WavefrontJerseyFactory {
     this.wavefrontJerseyFilter = wfJerseyFilterBuilder.build();
 
     this.wavefrontJaxrsClientFilter = new WavefrontJaxrsClientFilter(wavefrontSender,
-        applicationTags, source, tracer);
+            applicationTags, source, tracer);
   }
 
   public WavefrontJerseyFilter getWavefrontJerseyFilter() {
