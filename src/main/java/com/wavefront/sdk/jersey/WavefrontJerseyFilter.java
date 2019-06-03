@@ -106,8 +106,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   public void filter(ContainerRequestContext containerRequestContext) {
     try {
       processRequest(containerRequestContext);
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, "Exception filtering jersey containerRequest", e);
+    } catch (Throwable t) {
+      logger.log(Level.SEVERE, "Exception filtering jersey containerRequest", t);
     }
   }
 
@@ -116,8 +116,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
                      ContainerResponseContext containerResponseContext) {
     try {
       processResponse(containerRequestContext, containerResponseContext);
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, "Exception filtering jersey containerResponse", e);
+    } catch (Throwable t) {
+      logger.log(Level.SEVERE, "Exception filtering jersey containerResponse", t);
     }
   }
 
