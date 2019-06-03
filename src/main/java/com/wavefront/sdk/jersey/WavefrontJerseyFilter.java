@@ -210,10 +210,6 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String responseMetricKey =
           responseMetricKeyWithoutStatus + "." + containerResponseContext.getStatus();
 
-      /* Gauges
-       * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
-       * 2) jersey.server.total_requests.inflight
-       */
       Map<String, String> completeTagsMap = getCompleteTagsMap(finalClassName, finalMethodName);
 
       // Response metrics and histograms below
@@ -363,7 +359,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
       StatsContext statsContext = statsContextThreadLocal.get();
       if (statsContext != null) {
-        // update api inflight and total inflight gauges.
+
+        /* Gauges - update api inflight and total inflight gauges
+         * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
+         * 2) jersey.server.total_requests.inflight
+         */
         if (statsContext.getApiInflight() != null) {
           statsContext.getApiInflight().decrementAndGet();
         }
