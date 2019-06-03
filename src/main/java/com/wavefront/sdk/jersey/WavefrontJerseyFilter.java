@@ -106,8 +106,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   public void filter(ContainerRequestContext containerRequestContext) {
     try {
       processRequest(containerRequestContext);
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, "Exception filtering jersey containerRequest", e);
+    } catch (Throwable t) {
+      logger.log(Level.SEVERE, "Exception filtering jersey containerRequest", t);
     }
   }
 
@@ -116,8 +116,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
                      ContainerResponseContext containerResponseContext) {
     try {
       processResponse(containerRequestContext, containerResponseContext);
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, "Exception filtering jersey containerResponse", e);
+    } catch (Throwable t) {
+      logger.log(Level.SEVERE, "Exception filtering jersey containerResponse", t);
     }
   }
 
@@ -205,16 +205,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         String matchingPath = apiPathOptionalPair.get()._2;
         containerResponseContext.getHeaders().add(WF_SPAN_HEADER, matchingPath);
       }
-      String requestMetricKey = REQUEST_PREFIX + apiPathOptionalPair.get()._1;
+
       String responseMetricKeyWithoutStatus = RESPONSE_PREFIX + apiPathOptionalPair.get()._1;
       String responseMetricKey =
           responseMetricKeyWithoutStatus + "." + containerResponseContext.getStatus();
 
-
-      /* Gauges
-       * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
-       * 2) jersey.server.total_requests.inflight
-       */
       Map<String, String> completeTagsMap = getCompleteTagsMap(finalClassName, finalMethodName);
 
       // Response metrics and histograms below
@@ -364,7 +359,11 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
       StatsContext statsContext = statsContextThreadLocal.get();
       if (statsContext != null) {
-        // update api inflight and total inflight gauges.
+
+        /* Gauges - update api inflight and total inflight gauges
+         * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
+         * 2) jersey.server.total_requests.inflight
+         */
         if (statsContext.getApiInflight() != null) {
           statsContext.getApiInflight().decrementAndGet();
         }
