@@ -205,11 +205,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         String matchingPath = apiPathOptionalPair.get()._2;
         containerResponseContext.getHeaders().add(WF_SPAN_HEADER, matchingPath);
       }
-      String requestMetricKey = REQUEST_PREFIX + apiPathOptionalPair.get()._1;
+
       String responseMetricKeyWithoutStatus = RESPONSE_PREFIX + apiPathOptionalPair.get()._1;
       String responseMetricKey =
           responseMetricKeyWithoutStatus + "." + containerResponseContext.getStatus();
-
 
       /* Gauges
        * 1) jersey.server.request.api.v2.alert.summary.GET.inflight
