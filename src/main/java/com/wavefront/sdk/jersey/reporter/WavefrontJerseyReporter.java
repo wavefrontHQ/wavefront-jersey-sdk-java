@@ -8,7 +8,6 @@ import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.common.application.HeartbeaterService;
 import com.wavefront.sdk.entities.metrics.WavefrontMetricSender;
 
-import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
@@ -17,10 +16,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
+
 import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.APPLICATION_TAG_KEY;
-import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
 import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
 
 /**
@@ -66,7 +66,7 @@ public class WavefrontJerseyReporter implements SdkReporter {
 
   @Override
   public void registerGauge(MetricName metricName, AtomicInteger value) {
-    wfReporter.newGauge(metricName, () -> (double) value.get());
+    wfReporter.newGauge(metricName, () -> (() -> (double) value.get()));
   }
 
   @Override
