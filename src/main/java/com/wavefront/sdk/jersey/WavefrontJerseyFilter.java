@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,24 +66,28 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
   private final ApplicationTags applicationTags;
   private final ThreadLocal<StatsContext> statsContextThreadLocal = new ThreadLocal<>();
   private final ConcurrentMap<MetricName, AtomicInteger> gauges = new ConcurrentHashMap<>();
+  private final Set<String> headerTags;
 
   @Nullable
   private final Tracer tracer;
 
   private WavefrontJerseyFilter(SdkReporter wfJerseyReporter,
                                 ApplicationTags applicationTags,
-                                @Nullable Tracer tracer) {
+                                @Nullable Tracer tracer,
+                                Set<String> headerTags) {
     Preconditions.checkNotNull(wfJerseyReporter, "Invalid JerseyReporter");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfJerseyReporter = wfJerseyReporter;
     this.applicationTags = applicationTags;
     this.tracer = tracer;
+    this.headerTags = headerTags;
   }
 
   public static final class Builder {
 
     private final SdkReporter wfJerseyReporter;
     private final ApplicationTags applicationTags;
+    private final Set<String> headerTags = new HashSet<>();
     @Nullable
     private Tracer tracer;
 
@@ -96,10 +101,14 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       return this;
     }
 
-    public WavefrontJerseyFilter build() {
-      return new WavefrontJerseyFilter(wfJerseyReporter, applicationTags, tracer);
+    public Builder headerTags(Set<String> headerTags) {
+      this.headerTags.addAll(headerTags);
+      return this;
     }
 
+    public WavefrontJerseyFilter build() {
+      return new WavefrontJerseyFilter(wfJerseyReporter, applicationTags, tracer, headerTags);
+    }
   }
 
   @Override
@@ -148,6 +157,9 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         if (parentSpanContext != null) {
           spanBuilder.asChildOf(parentSpanContext);
         }
+
+        handleHeaderTags(containerRequestContext, spanBuilder);
+
         Scope scope = spanBuilder.startActive(false);
         decorateRequest(containerRequestContext, scope.span());
         containerRequestContext.setProperty(PROPERTY_NAME, scope);
@@ -171,6 +183,24 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       totalInflight.incrementAndGet();
       statsContextThreadLocal.set(new StatsContext(startTime, startTimeCpuNanos, apiInflight,
           totalInflight));
+    }
+  }
+
+  private void handleHeaderTags(ContainerRequestContext containerRequestContext,
+                                Tracer.SpanBuilder spanBuilder) {
+    if (headerTags.size() == 0) {
+      return;
+    }
+
+    MultivaluedMap<String, String> requestHeaders = containerRequestContext.getHeaders();
+
+    for (String headerName : headerTags) {
+      if (requestHeaders.containsKey(headerName)) {
+        // In case of array value, will be added as repeated tags.
+        for (String requestHeaderValue : requestHeaders.get(headerName)) {
+          spanBuilder.withTag(headerName, requestHeaderValue);
+        }
+      }
     }
   }
 
