@@ -1,6 +1,6 @@
 open_source_licenses.txt
 
-Wavefront by VMware Jersey SDK for Java 0.9.7 GA
+Wavefront by VMware Jersey SDK for Java 0.9.8 GA
 
 ======================================================================
 
@@ -28,12 +28,10 @@ of the license associated with each component.
 SECTION 1: Apache License, V2.0
 
    >>> com.fasterxml.jackson.core:jackson-annotations-2.9.0
+   >>> com.fasterxml.jackson.core:jackson-annotations-2.9.0
    >>> com.fasterxml.jackson.core:jackson-annotations-2.9.9
-   >>> com.fasterxml.jackson.core:jackson-core-2.9.6
    >>> com.fasterxml.jackson.core:jackson-core-2.9.9
-   >>> com.fasterxml.jackson.core:jackson-databind-2.9.6
-   >>> com.fasterxml.jackson.core:jackson-databind-2.9.9
-   >>> com.fasterxml.jackson.dataformat:jackson-dataformat-yaml-2.9.6
+   >>> com.fasterxml.jackson.core:jackson-databind-2.9.9.3
    >>> com.fasterxml.jackson.dataformat:jackson-dataformat-yaml-2.9.9
    >>> com.google.code.findbugs:jsr305-3.0.0
    >>> com.tdunning:t-digest-3.2
@@ -42,13 +40,12 @@ SECTION 1: Apache License, V2.0
    >>> io.opentracing:opentracing-api-0.32.0
    >>> io.opentracing:opentracing-noop-0.32.0
    >>> io.opentracing:opentracing-util-0.32.0
-   >>> javax.validation:validation-api-1.1.0.final
+   >>> javax.validation:validation-api-1.1.0.Final
    >>> org.apache.commons:commons-lang3-3.1
    >>> org.apache.commons:commons-lang3-3.7
    >>> org.glassfish.hk2.external:javax.inject-2.5.0-b32
    >>> org.glassfish.jersey.bundles.repackaged:jersey-guava-2.25.1
    >>> org.javassist:javassist-3.20.0-ga
-   >>> org.yaml:snakeyaml-1.18
    >>> org.yaml:snakeyaml-1.23
 
 
@@ -110,7 +107,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 
->>> com.fasterxml.jackson.core:jackson-annotations-2.9.9
+>>> com.fasterxml.jackson.core:jackson-annotations-2.9.0
 
 This copy of Jackson JSON processor annotations is licensed under the
 Apache (Software) License, version 2.0 ("the License").
@@ -121,32 +118,9 @@ You may obtain a copy of the License at:
 
 http://www.apache.org/licenses/LICENSE-2.0
 
+>>> com.fasterxml.jackson.core:jackson-annotations-2.9.9
 
-
->>> com.fasterxml.jackson.core:jackson-core-2.9.6
-
-Jackson JSON processor
-
-Jackson is a high-performance, Free/Open Source JSON processing library.
-It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
-been in development since 2007.
-It is currently developed by a community of developers, as well as supported
-commercially by FasterXML.com.
-
-Licensing
-
-Jackson core and extension components may licensed under different licenses.
-To find the details that apply to this artifact see the accompanying LICENSE file.
-For more information, including possible other licensing options, contact
-FasterXML.com (http://fasterxml.com).
-
-Credits
-
-A list of contributors may be found from CREDITS file, which is included
-in some artifacts (usually source distributions); but is always available
-from the source code management (SCM) system project uses.
-
-This copy of Jackson JSON processor streaming parser/generator is licensed under the
+This copy of Jackson JSON processor annotations is licensed under the
 Apache (Software) License, version 2.0 ("the License").
 See the License for details about distribution rights, and the
 specific rights regarding derivate works.
@@ -191,41 +165,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 
->>> com.fasterxml.jackson.core:jackson-databind-2.9.6
-
-Jackson JSON processor
-
-Jackson is a high-performance, Free/Open Source JSON processing library.
-It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
-been in development since 2007.
-It is currently developed by a community of developers, as well as supported
-commercially by FasterXML.com.
-
-Licensing
-
-Jackson core and extension components may be licensed under different licenses.
-To find the details that apply to this artifact see the accompanying LICENSE file.
-For more information, including possible other licensing options, contact
-FasterXML.com (http://fasterxml.com).
-
-Credits
-
-A list of contributors may be found from CREDITS file, which is included
-in some artifacts (usually source distributions); but is always available
-from the source code management (SCM) system project uses.
-
-This copy of Jackson JSON processor databind module is licensed under the
-Apache (Software) License, version 2.0 ("the License").
-See the License for details about distribution rights, and the
-specific rights regarding derivate works.
-
-You may obtain a copy of the License at:
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-
-
->>> com.fasterxml.jackson.core:jackson-databind-2.9.9
+>>> com.fasterxml.jackson.core:jackson-databind-2.9.9.3
 
 # Jackson JSON processor
 
@@ -249,40 +189,6 @@ in some artifacts (usually source distributions); but is always available
 from the source code management (SCM) system project uses.
 
 This copy of Jackson JSON processor databind module is licensed under the
-Apache (Software) License, version 2.0 ("the License").
-See the License for details about distribution rights, and the
-specific rights regarding derivate works.
-
-You may obtain a copy of the License at:
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-
-
->>> com.fasterxml.jackson.dataformat:jackson-dataformat-yaml-2.9.6
-
-Jackson JSON processor
-
-Jackson is a high-performance, Free/Open Source JSON processing library.
-It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
-been in development since 2007.
-It is currently developed by a community of developers, as well as supported
-commercially by FasterXML.com.
-
-Licensing
-
-Jackson core and extension components may be licensed under different licenses.
-To find the details that apply to this artifact see the accompanying LICENSE file.
-For more information, including possible other licensing options, contact
-FasterXML.com (http://fasterxml.com).
-
-Credits
-
-A list of contributors may be found from CREDITS file, which is included
-in some artifacts (usually source distributions); but is always available
-from the source code management (SCM) system project uses.
-
-This copy of Jackson JSON processor YAML module is licensed under the
 Apache (Software) License, version 2.0 ("the License").
 See the License for details about distribution rights, and the
 specific rights regarding derivate works.
@@ -406,7 +312,7 @@ the License.
 
 
 
->>> javax.validation:validation-api-1.1.0.final
+>>> javax.validation:validation-api-1.1.0.Final
 
 Copyright 2012-2013, Red Hat, Inc. and/or its affiliates, and individual contributors
 by the @authors tag. See the copyright.txt in the distribution for a
@@ -457,8 +363,6 @@ The Apache Software Foundation (http://www.apache.org/).
 
 This product includes software from the Spring Framework,
 under the Apache License 2.0 (see: StringUtils.containsWhitespace())
-
-
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
 this work for additional information regarding copyright ownership.
@@ -579,47 +483,6 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
-
->>> org.yaml:snakeyaml-1.18
-
-Copyright (c) 2008, http:www.snakeyaml.org
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http:www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-ADDITIONAL LICENSE INFORMATION:
-
->BSD – 2Clause
-
-[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE [BSD LICENSE].  PLEASE SEE BELOW FOR THE FULL TEXT OF THE BSD LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
-
-snakeyaml-1.18-sources.jar\org\yaml\snakeyaml\external\biz\base64Coder\Base64Coder.java
-
-Copyright 2003-2010 Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland
-www.source-code.biz, www.inventec.ch/chdh
-
-This module is multi-licensed and may be used under the terms
-of any of the following licenses:
-
-EPL, Eclipse Public License, V1.0 or later, http:www.eclipse.org/legal
-LGPL, GNU Lesser General Public License, V2.1 or later, http:www.gnu.org/licenses/lgpl.html
-GPL, GNU General Public License, V2 or later, http:www.gnu.org/licenses/gpl.html
-AL, Apache License, V2.0 or later, http:www.apache.org/licenses
-BSD, BSD License, http:www.opensource.org/licenses/bsd-license.php
-
-Please contact the author if you need another license.
-This module is provided "as is", without warranties of any kind.
-
-
 
 >>> org.yaml:snakeyaml-1.23
 
@@ -895,6 +758,7 @@ holder.
 
 [PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE.  PLEASE SEE APPENDIX FOR THE FULL TEXT OF THE CDDL 1.1 LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
+
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
 Copyright (c) 2013-2016 Oracle and/or its affiliates. All rights reserved.
@@ -935,11 +799,12 @@ holder.
 
 >>> org.glassfish.hk2:hk2-api-2.5.0-b32
 
-[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE]. THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE.  PLEASE SEE APPENDIX FOR THE FULL TEXT OF THE CDDL 1.1 LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+
 
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-Copyright (c) 2007-2015 Oracle and/or its affiliates. All rights reserved.
+Copyright (c) 2010-2016 Oracle and/or its affiliates. All rights reserved.
 
 The contents of this file are subject to the terms of either the GNU
 General Public License Version 2 only ("GPL") or the Common Development
@@ -977,7 +842,7 @@ holder.
 
 >>> org.glassfish.hk2:hk2-locator-2.5.0-b32
 
-[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE]. THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE.  PLEASE SEE APPENDIX FOR THE FULL TEXT OF THE CDDL 1.1 LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
@@ -1021,9 +886,11 @@ holder.
 
 [PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE.  PLEASE SEE APPENDIX FOR THE FULL TEXT OF THE CDDL 1.1 LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
+
+
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-Copyright (c) 2007-2015 Oracle and/or its affiliates. All rights reserved.
+Copyright (c) 2013-2015 Oracle and/or its affiliates. All rights reserved.
 
 The contents of this file are subject to the terms of either the GNU
 General Public License Version 2 only ("GPL") or the Common Development
@@ -1057,6 +924,7 @@ either the CDDL, the GPL Version 2 or to extend the choice of license to
 its licensees as provided above.  However, if you add GPL Version 2 code
 and therefore, elected the GPL Version 2 license, then the option applies
 only if the new code is made subject to such option by the copyright
+holder.is made subject to such option by the copyright
 holder.
 
 >>> org.glassfish.hk2:osgi-resource-locator-1.0.1
@@ -1099,101 +967,92 @@ holder.
 
 >>> org.glassfish.jersey.core:jersey-client-2.25.1
 
-[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE CDDL 1.1.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
-
-DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-
-Copyright (c) 2014-2015 Oracle and/or its affiliates. All rights reserved.
-
-The contents of this file are subject to the terms of either the GNU
-General Public License Version 2 only ("GPL") or the Common Development
-and Distribution License("CDDL") (collectively, the "License").  You
-may not use this file except in compliance with the License.  You can
-obtain a copy of the License at
-http://glassfish.java.net/public/CDDL+GPL_1_1.html
-or packager/legal/LICENSE.txt.  See the License for the specific
-language governing permissions and limitations under the License.
-
-When distributing the software, include this License Header Notice in each
-file and include the License file at packager/legal/LICENSE.txt.
-
-GPL Classpath Exception:
-Oracle designates this particular file as subject to the "Classpath"
-exception as provided by Oracle in the GPL Version 2 section of the License
-file that accompanied this code.
-
-Modifications:
-If applicable, add the following below the License Header, with the fields
-enclosed by brackets [] replaced by your own identifying information:
-"Portions Copyright [year] [name of copyright owner]"
-
-Contributor(s):
-If you wish your version of this file to be governed by only the CDDL or
-only the GPL Version 2, indicate your decision by adding "[Contributor]
-elects to include this software in this distribution under the [CDDL or GPL
-Version 2] license."  If you don't indicate a single choice of license, a
-recipient has the option to distribute your version of this file under
-either the CDDL, the GPL Version 2 or to extend the choice of license to
-its licensees as provided above.  However, if you add GPL Version 2 code
-and therefore, elected the GPL Version 2 license, then the option applies
-only if the new code is made subject to such option by the copyright
+[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE CDDL 1.1.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright (c) 2015 Oracle and/or its affiliates. All rights reserved.
+
+The contents of this file are subject to the terms of either the GNU
+General Public License Version 2 only ("GPL") or the Common Development
+and Distribution License("CDDL") (collectively, the "License").  You
+may not use this file except in compliance with the License.  You can
+obtain a copy of the License at
+http://glassfish.java.net/public/CDDL+GPL_1_1.html
+or packager/legal/LICENSE.txt.  See the License for the specific
+language governing permissions and limitations under the License.
+
+When distributing the software, include this License Header Notice in each
+file and include the License file at packager/legal/LICENSE.txt.
+
+GPL Classpath Exception:
+Oracle designates this particular file as subject to the "Classpath"
+exception as provided by Oracle in the GPL Version 2 section of the License
+file that accompanied this code.
+
+Modifications:
+If applicable, add the following below the License Header, with the fields
+enclosed by brackets [] replaced by your own identifying information:
+"Portions Copyright [year] [name of copyright owner]"
+
+Contributor(s):
+If you wish your version of this file to be governed by only the CDDL or
+only the GPL Version 2, indicate your decision by adding "[Contributor]
+elects to include this software in this distribution under the [CDDL or GPL
+Version 2] license."  If you don't indicate a single choice of license, a
+recipient has the option to distribute your version of this file under
+either the CDDL, the GPL Version 2 or to extend the choice of license to
+its licensees as provided above.  However, if you add GPL Version 2 code
+and therefore, elected the GPL Version 2 license, then the option applies
+only if the new code is made subject to such option by the copyright
 holder.
 
 >>> org.glassfish.jersey.core:jersey-common-2.25.1
 
-[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1 LICENSE.  PLEASE SEE APPENDIX FOR THE FULL TEXT OF THE CDDL 1.1 LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
-
-DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-
-Copyright (c) 2011-2016 Oracle and/or its affiliates. All rights reserved.
-
-The contents of this file are subject to the terms of either the GNU
-General Public License Version 2 only ("GPL") or the Common Development
-and Distribution License("CDDL") (collectively, the "License").  You
-may not use this file except in compliance with the License.  You can
-obtain a copy of the License at
-http://glassfish.java.net/public/CDDL+GPL_1_1.html
-or packager/legal/LICENSE.txt.  See the License for the specific
-language governing permissions and limitations under the License.
-
-When distributing the software, include this License Header Notice in each
-file and include the License file at packager/legal/LICENSE.txt.
-
-GPL Classpath Exception:
-Oracle designates this particular file as subject to the "Classpath"
-exception as provided by Oracle in the GPL Version 2 section of the License
-file that accompanied this code.
-
-Modifications:
-If applicable, add the following below the License Header, with the fields
-enclosed by brackets [] replaced by your own identifying information:
-"Portions Copyright [year] [name of copyright owner]"
-
-Contributor(s):
-If you wish your version of this file to be governed by only the CDDL or
-only the GPL Version 2, indicate your decision by adding "[Contributor]
-elects to include this software in this distribution under the [CDDL or GPL
-Version 2] license."  If you don't indicate a single choice of license, a
-recipient has the option to distribute your version of this file under
-either the CDDL, the GPL Version 2 or to extend the choice of license to
-its licensees as provided above.  However, if you add GPL Version 2 code
-and therefore, elected the GPL Version 2 license, then the option applies
-only if the new code is made subject to such option by the copyright
+[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE CDDL 1.1.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright (c) 2011-2016 Oracle and/or its affiliates. All rights reserved.
+
+The contents of this file are subject to the terms of either the GNU
+General Public License Version 2 only ("GPL") or the Common Development
+and Distribution License("CDDL") (collectively, the "License").  You
+may not use this file except in compliance with the License.  You can
+obtain a copy of the License at
+http://glassfish.java.net/public/CDDL+GPL_1_1.html
+or packager/legal/LICENSE.txt.  See the License for the specific
+language governing permissions and limitations under the License.
+
+When distributing the software, include this License Header Notice in each
+file and include the License file at packager/legal/LICENSE.txt.
+
+GPL Classpath Exception:
+Oracle designates this particular file as subject to the "Classpath"
+exception as provided by Oracle in the GPL Version 2 section of the License
+file that accompanied this code.
+
+Modifications:
+If applicable, add the following below the License Header, with the fields
+enclosed by brackets [] replaced by your own identifying information:
+"Portions Copyright [year] [name of copyright owner]"
+
+Contributor(s):
+If you wish your version of this file to be governed by only the CDDL or
+only the GPL Version 2, indicate your decision by adding "[Contributor]
+elects to include this software in this distribution under the [CDDL or GPL
+Version 2] license."  If you don't indicate a single choice of license, a
+recipient has the option to distribute your version of this file under
+either the CDDL, the GPL Version 2 or to extend the choice of license to
+its licensees as provided above.  However, if you add GPL Version 2 code
+and therefore, elected the GPL Version 2 license, then the option applies
+only if the new code is made subject to such option by the copyright
 holder.
-
-ADDITIONAL LICENSE INFORMATION:
-
-> Public Domain
-
-jersey-common-2.25.1-sources.jar\org\glassfish\jersey\internal\util\collection\TransferQueue.java
-
-Written by Doug Lea with assistance from members of JCP JSR-166
-Expert Group and released to the public domain, as explained at
-http://creativecommons.org/licenses/publicdomain
 
 >>> org.glassfish.jersey.core:jersey-server-2.25.1
 
-[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE [CDDL 1.1 LICENSE].  PLEASE SEE BELOW FOR THE FULL TEXT OF THE CDDL 1.1 LICENSE.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+[PLEASE NOTE:  VMWARE, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.1  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE CDDL 1.1.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
 Copyright (c) 2010-2012 Oracle and/or its affiliates. All rights reserved.
@@ -1232,11 +1091,14 @@ and therefore, elected the GPL Version 2 license, then the option applies
 only if the new code is made subject to such option by the copyright
 holder.
 
+
 ADDITIONAL LICENSE INFORMATION:
 
->BSD – 3Clause
 
-jersey-server-2.25.1-sources.jar\jersey\repackaged\org\objectweb\asm\Handle.java
+>BSD-3
+
+jersey-server-2.25.1-sources.jar\jersey\repackaged\org\objectweb\asm\AnnotationVisitor.java
+
 
 ASM: a very small and fast Java bytecode manipulation framework
 Copyright (c) 2000-2011 INRIA, France Telecom
@@ -1677,8 +1539,10 @@ This License represents the complete agreement concerning subject matter hereof.
 As between Initial Developer and the Contributors, each party is responsible for claims and damages arising, directly or indirectly, out of its utilization of rights under this License and You agree to work with Initial Developer and Contributors to distribute such responsibility on an equitable basis. Nothing herein is intended or shall be deemed to constitute any admission of liability. 
 
 NOTICE PURSUANT TO SECTION 9 OF THE COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) 
-The code released under the CDDL shall be governed by the laws of the State of California (excluding conflict-of-law provisions). Any litigation relating to this License shall be subject to the jurisdiction of the Federal Courts of the Northern District of California and the state courts of the State of California, with venue lying in Santa Clara County, California.
-
+The code released under the CDDL shall be governed by the laws of the State of California (excluding conflict-of-law provisions). Any litigation relating to this License shall be subject to the jurisdiction of the Federal Courts of the Northern District of California and the state courts of the State of California, with venue lying in Santa Clara County, California.
+
+
+
 --------------- SECTION 4: Common Development and Distribution License, V1.0 -----------
 
 COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
@@ -2008,10 +1872,8 @@ responsible for claims and damages arising, directly or indirectly, out
 of its utilization of rights under this License and You agree to work
 with Initial Developer and Contributors to distribute such responsibility
 on an equitable basis. Nothing herein is intended or shall be deemed to
-constitute any admission of liability.
-
-
-
+constitute any admission of liability.
+
 ======================================================================
 
 To the extent any open source components are licensed under the GPL
@@ -2030,4 +1892,4 @@ Source Files is valid for three years from the date you acquired or last used th
 Software product. Alternatively, the Source Files may accompany the
 VMware service.
 
-[WAVEFRONTJERSEYSDKJAVA097GANT070219]
+[WAVEFRONTJERSEYSDKJAVA098GAAB091919]
