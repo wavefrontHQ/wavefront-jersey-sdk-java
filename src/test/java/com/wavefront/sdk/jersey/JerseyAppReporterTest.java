@@ -69,6 +69,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barCreate");
+      put("operationName", "SampleResource.barCreate");
     }};
     // Request gauge
     assertEquals(0, sampleApp.reportedValue(new MetricName(
@@ -84,6 +85,7 @@ public class JerseyAppReporterTest {
         new HashMap<String, String>() {{
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
+          put("operationName", "SampleResource.barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -92,6 +94,7 @@ public class JerseyAppReporterTest {
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
+          put("operationName", "SampleResource.barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -101,6 +104,7 @@ public class JerseyAppReporterTest {
           put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barCreate");
+          put("operationName", "SampleResource.barCreate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -110,6 +114,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barCreate");
+      put("operationName", "SampleResource.barCreate");
       put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
 
@@ -150,6 +155,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barGet");
+      put("operationName", "SampleResource.barGet");
     }};
     // Request gauge
     assertEquals(0, sampleApp.reportedValue(new MetricName(
@@ -165,6 +171,7 @@ public class JerseyAppReporterTest {
         new HashMap<String, String>() {{
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
+          put("operationName", "SampleResource.barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -173,6 +180,7 @@ public class JerseyAppReporterTest {
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
+          put("operationName", "SampleResource.barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -182,6 +190,7 @@ public class JerseyAppReporterTest {
           put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
+          put("operationName", "SampleResource.barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -192,6 +201,7 @@ public class JerseyAppReporterTest {
           put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barGet");
+          put("operationName", "SampleResource.barGet");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
 
@@ -232,6 +242,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barUpdate");
+      put("operationName", "SampleResource.barUpdate");
     }};
     // Request gauge
     assertEquals(0, sampleApp.reportedValue(new MetricName(
@@ -247,6 +258,7 @@ public class JerseyAppReporterTest {
         new HashMap<String, String>() {{
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
+          put("operationName", "SampleResource.barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -255,6 +267,7 @@ public class JerseyAppReporterTest {
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
+          put("operationName", "SampleResource.barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -264,6 +277,7 @@ public class JerseyAppReporterTest {
           put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
+          put("operationName", "SampleResource.barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -274,6 +288,7 @@ public class JerseyAppReporterTest {
           put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barUpdate");
+          put("operationName", "SampleResource.barUpdate");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
 
@@ -314,6 +329,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barDelete");
+      put("operationName", "SampleResource.barDelete");
     }};
     // Request gauge
     assertEquals(0, sampleApp.reportedValue(new MetricName(
@@ -329,6 +345,7 @@ public class JerseyAppReporterTest {
         new HashMap<String, String>() {{
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
+          put("operationName", "SampleResource.barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -337,6 +354,7 @@ public class JerseyAppReporterTest {
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
+          put("operationName", "SampleResource.barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -346,6 +364,7 @@ public class JerseyAppReporterTest {
           put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
+          put("operationName", "SampleResource.barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
         }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -356,6 +375,7 @@ public class JerseyAppReporterTest {
           put(SHARD_TAG_KEY, SampleApp.SHARD);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "barDelete");
+          put("operationName", "SampleResource.barDelete");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
 
@@ -396,6 +416,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "getAll");
+      put("operationName", "SampleResource.getAll");
     }};
     // Request gauge
     assertEquals(0, sampleApp.reportedValue(new MetricName(
@@ -411,6 +432,7 @@ public class JerseyAppReporterTest {
         new HashMap<String, String>() {{
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
+          put("operationName", "SampleResource.getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -419,6 +441,7 @@ public class JerseyAppReporterTest {
           put(CLUSTER_TAG_KEY, SampleApp.CLUSTER);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
+          put("operationName", "SampleResource.getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -428,6 +451,7 @@ public class JerseyAppReporterTest {
           put(SERVICE_TAG_KEY, SampleApp.SERVICE);
           put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
           put("jersey.resource.method", "getAll");
+          put("operationName", "SampleResource.getAll");
           put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
     assertEquals(1, sampleApp.reportedValue(new MetricName(
@@ -437,6 +461,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "getAll");
+      put("operationName", "SampleResource.getAll");
       put("source", WAVEFRONT_PROVIDED_SOURCE);
     }})));
 
@@ -476,6 +501,7 @@ public class JerseyAppReporterTest {
       put(SHARD_TAG_KEY, SampleApp.SHARD);
       put("jersey.resource.class", SampleApp.SampleResource.class.getCanonicalName());
       put("jersey.resource.method", "barGet");
+      put("operationName", "SampleResource.barGet");
     }};
     // Response counter metric
     assertEquals(1, sampleApp.reportedValue(new MetricName(

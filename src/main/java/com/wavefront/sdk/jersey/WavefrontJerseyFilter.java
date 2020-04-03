@@ -146,10 +146,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
+      String spanOperationName = getSpanOperationName(finalClassName, finalMethodName);
 
       if (tracer != null) {
-        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(finalClassName.substring(
-            finalClassName.lastIndexOf('.') + 1) + "." + finalMethodName).
+        Tracer.SpanBuilder spanBuilder = tracer.buildSpan(spanOperationName).
             withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER).
             withTag("jersey.resource.class", finalClassName).
             withTag("jersey.path", finalMatchingPath);
@@ -170,7 +170,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
        * 2) jersey.server.total_requests.inflight
        */
       AtomicInteger apiInflight = getGaugeValue(new MetricName(requestMetricKey + ".inflight",
-          getCompleteTagsMap(finalClassName, finalMethodName)));
+          getCompleteTagsMap(finalClassName, finalMethodName, spanOperationName)));
       apiInflight.incrementAndGet();
       AtomicInteger totalInflight = getGaugeValue(new MetricName("total_requests.inflight",
           new HashMap<String, String>() {{
@@ -225,6 +225,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       Pair<String, String> pair = getClassAndMethodName(uriInfo);
       String finalClassName = pair._1;
       String finalMethodName = pair._2;
+      String spanOperationName = getSpanOperationName(finalClassName, finalMethodName);
 
       Optional<Pair<String, String>> apiPathOptionalPair =
           MetricNameUtils.metricNameAndPath(request);
@@ -240,7 +241,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       String responseMetricKey =
           responseMetricKeyWithoutStatus + "." + containerResponseContext.getStatus();
 
-      Map<String, String> completeTagsMap = getCompleteTagsMap(finalClassName, finalMethodName);
+      Map<String, String> completeTagsMap = getCompleteTagsMap(
+          finalClassName, finalMethodName, spanOperationName);
 
       // Response metrics and histograms below
       Map<String, String> aggregatedPerShardMap = new HashMap<String, String>() {{
@@ -251,6 +253,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
             applicationTags.getShard());
         put("jersey.resource.class", finalClassName);
         put("jersey" + ".resource.method", finalMethodName);
+        put("operationName", spanOperationName);
         put("source", WAVEFRONT_PROVIDED_SOURCE);
       }};
 
@@ -277,6 +280,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
         put(SERVICE_TAG_KEY, applicationTags.getService());
         put("jersey.resource.class", finalClassName);
         put("jersey" + ".resource.method", finalMethodName);
+        put("operationName", spanOperationName);
         put("source", WAVEFRONT_PROVIDED_SOURCE);
       }};
 
@@ -292,6 +296,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
             applicationTags.getCluster());
         put("jersey.resource.class", finalClassName);
         put("jersey" + ".resource.method", finalMethodName);
+        put("operationName", spanOperationName);
         put("source", WAVEFRONT_PROVIDED_SOURCE);
       }};
 
@@ -304,6 +309,7 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       Map<String, String> aggregatedPerApplicationMap = new HashMap<String, String>() {{
         put("jersey.resource.class", finalClassName);
         put("jersey" + ".resource.method", finalMethodName);
+        put("operationName", spanOperationName);
         put("source", WAVEFRONT_PROVIDED_SOURCE);
       }};
 
@@ -449,7 +455,8 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
     });
   }
 
-  private Map<String, String> getCompleteTagsMap(String finalClassName, String finalMethodName) {
+  private Map<String, String> getCompleteTagsMap(String finalClassName, String finalMethodName,
+                                                 String spanOperationName) {
     return new HashMap<String, String>() {{
       put(CLUSTER_TAG_KEY, applicationTags.getCluster() == null ? NULL_TAG_VAL :
           applicationTags.getCluster());
@@ -457,8 +464,13 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
       put(SHARD_TAG_KEY,
           applicationTags.getShard() == null ? NULL_TAG_VAL : applicationTags.getShard());
       put("jersey.resource.class", finalClassName);
-      put("jersey" + ".resource.method", finalMethodName);
+      put("jersey.resource.method", finalMethodName);
+      put("operationName", spanOperationName);
     }};
+  }
+
+  private String getSpanOperationName(String finalClassName, String finalMethodName) {
+    return finalClassName.substring(finalClassName.lastIndexOf('.') + 1) + "." + finalMethodName;
   }
 
   private SpanContext parentSpanContext(ContainerRequestContext requestContext) {
