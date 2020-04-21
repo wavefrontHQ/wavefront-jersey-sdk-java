@@ -4,6 +4,7 @@ import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.Pair;
 import com.wavefront.sdk.common.application.ApplicationTags;
+import com.wavefront.sdk.jaxrs.client.SpanWrapper;
 
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
@@ -160,9 +161,10 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
 
         handleHeaderTags(containerRequestContext, spanBuilder);
 
-        Scope scope = spanBuilder.startActive(false);
-        decorateRequest(containerRequestContext, scope.span());
-        containerRequestContext.setProperty(PROPERTY_NAME, scope);
+        Span span = spanBuilder.start();
+        Scope scope = tracer.activateSpan(span);
+        decorateRequest(containerRequestContext, span);
+        containerRequestContext.setProperty(PROPERTY_NAME, new SpanWrapper(span, scope));
       }
 
       /* Gauges
@@ -208,14 +210,20 @@ public class WavefrontJerseyFilter implements ContainerRequestFilter, ContainerR
                                ContainerResponseContext containerResponseContext) {
     if (tracer != null) {
       try {
-        Scope scope = (Scope) containerRequestContext.getProperty(PROPERTY_NAME);
-        if (scope != null) {
-          decorateResponse(containerResponseContext, scope.span());
-          scope.close();
-          scope.span().finish();
+        SpanWrapper spanWrapper = (SpanWrapper) containerRequestContext.getProperty(PROPERTY_NAME);
+        if (spanWrapper != null) {
+          Scope scope = spanWrapper.getScope();
+          if (scope != null) {
+            Span span = spanWrapper.getSpan();
+            if (span != null) {
+              decorateResponse(containerResponseContext, span);
+              span.finish();
+            }
+            scope.close();
+          }
         }
       } catch (ClassCastException ex) {
-        // no valid scope found
+        // no valid SpanWrapper found
       }
     }
     if (containerRequestContext instanceof ContainerRequest) {
