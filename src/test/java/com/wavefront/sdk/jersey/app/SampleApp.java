@@ -116,6 +116,11 @@ public class SampleApp extends Application<Configuration> {
       public void close() {
         // no-op
       }
+
+      @Override
+      public void flush() {
+        spanCache.clear();
+      }
     }, applicationTags).build()).build());
   }
 
