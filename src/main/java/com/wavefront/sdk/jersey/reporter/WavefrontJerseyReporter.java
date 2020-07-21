@@ -3,6 +3,7 @@ package com.wavefront.sdk.jersey.reporter;
 import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal.reporter.WavefrontInternalReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
+import com.wavefront.sdk.common.Utils;
 import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import com.wavefront.sdk.common.application.HeartbeaterService;
@@ -21,6 +22,7 @@ import javax.annotation.Nullable;
 import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.APPLICATION_TAG_KEY;
+import static com.wavefront.sdk.common.Constants.SDK_METRIC_PREFIX;
 import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
 
 /**
@@ -32,19 +34,32 @@ import static com.wavefront.sdk.jersey.Constants.JERSEY_SERVER_COMPONENT;
 public class WavefrontJerseyReporter implements SdkReporter {
 
   private final WavefrontInternalReporter wfReporter;
+  private final WavefrontInternalReporter sdkMetricsReporter;
   private final int reportingIntervalSeconds;
   private final HeartbeaterService heartbeaterService;
 
+  @Deprecated
   private WavefrontJerseyReporter(WavefrontInternalReporter wfReporter,
                                   int reportingIntervalSeconds,
                                   WavefrontMetricSender wavefrontMetricSender,
                                   ApplicationTags applicationTags,
                                   String source) {
+    this(wfReporter, reportingIntervalSeconds, wavefrontMetricSender, applicationTags, source,
+        null);
+  }
+
+  private WavefrontJerseyReporter(WavefrontInternalReporter wfReporter,
+                                  int reportingIntervalSeconds,
+                                  WavefrontMetricSender wavefrontMetricSender,
+                                  ApplicationTags applicationTags,
+                                  String source,
+                                  WavefrontInternalReporter sdkMetricsReporter) {
     Preconditions.checkNotNull(wfReporter, "Invalid wfReporter");
     Preconditions.checkNotNull(wavefrontMetricSender, "Invalid wavefrontSender");
     Preconditions.checkNotNull(applicationTags, "Invalid ApplicationTags");
     this.wfReporter = wfReporter;
     this.reportingIntervalSeconds = reportingIntervalSeconds;
+    this.sdkMetricsReporter = sdkMetricsReporter;
     heartbeaterService = new HeartbeaterService(wavefrontMetricSender, applicationTags,
         Collections.singletonList(JERSEY_SERVER_COMPONENT), source);
   }
@@ -143,19 +158,33 @@ public class WavefrontJerseyReporter implements SdkReporter {
       WavefrontInternalReporter wfReporter = new WavefrontInternalReporter.Builder().
           prefixedWith(prefix).withSource(source).withReporterPointTags(pointTags).
           reportMinuteDistribution().build(wavefrontSender);
+
+      WavefrontInternalReporter sdkMetricsReporter = new WavefrontInternalReporter.Builder().
+          prefixedWith(SDK_METRIC_PREFIX + ".jersey").withSource(source).
+          withReporterPointTags(pointTags).build(wavefrontSender);
+      double sdkVersion = Utils.getSemVer();
+      sdkMetricsReporter.newGauge(new MetricName("version", Collections.emptyMap()),
+          () -> (() -> sdkVersion));
+
       return new WavefrontJerseyReporter(wfReporter, reportingIntervalSeconds, wavefrontSender,
-              applicationTags, source);
+              applicationTags, source, sdkMetricsReporter);
     }
   }
 
   @Override
   public void start() {
     wfReporter.start(reportingIntervalSeconds, TimeUnit.SECONDS);
+    if (sdkMetricsReporter != null) {
+      sdkMetricsReporter.start(1, TimeUnit.MINUTES);
+    }
   }
 
   @Override
   public void stop() {
     heartbeaterService.close();
     wfReporter.stop();
+    if (sdkMetricsReporter != null) {
+      sdkMetricsReporter.stop();
+    }
   }
 }
