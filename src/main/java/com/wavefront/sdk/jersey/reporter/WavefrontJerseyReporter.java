@@ -162,7 +162,7 @@ public class WavefrontJerseyReporter implements SdkReporter {
       WavefrontInternalReporter sdkMetricsReporter = new WavefrontInternalReporter.Builder().
           prefixedWith(SDK_METRIC_PREFIX + ".jersey").withSource(source).
           withReporterPointTags(pointTags).build(wavefrontSender);
-      double sdkVersion = Utils.getSemVer();
+      double sdkVersion = Utils.getSemVerGauge("wavefront-jersey-sdk-java");
       sdkMetricsReporter.newGauge(new MetricName("version", Collections.emptyMap()),
           () -> (() -> sdkVersion));
 
