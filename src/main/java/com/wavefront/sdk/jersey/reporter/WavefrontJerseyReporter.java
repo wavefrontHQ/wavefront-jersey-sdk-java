@@ -1,5 +1,7 @@
 package com.wavefront.sdk.jersey.reporter;
 
+import com.google.common.base.Preconditions;
+
 import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal.reporter.WavefrontInternalReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
@@ -19,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 
-import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.APPLICATION_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.SDK_METRIC_PREFIX;
