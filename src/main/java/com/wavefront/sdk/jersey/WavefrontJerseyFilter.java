@@ -1,5 +1,7 @@
 package com.wavefront.sdk.jersey;
 
+import com.google.common.base.Preconditions;
+
 import com.wavefront.internal.reporter.SdkReporter;
 import com.wavefront.internal_reporter_java.io.dropwizard.metrics5.MetricName;
 import com.wavefront.sdk.common.Pair;
@@ -42,7 +44,6 @@ import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.propagation.TextMap;
 import io.opentracing.tag.Tags;
-import jersey.repackaged.com.google.common.base.Preconditions;
 
 import static com.wavefront.sdk.common.Constants.CLUSTER_TAG_KEY;
 import static com.wavefront.sdk.common.Constants.NULL_TAG_VAL;
