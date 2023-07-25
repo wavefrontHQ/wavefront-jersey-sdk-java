@@ -1,7 +1,9 @@
-```
-VMware has ended active development of this project, this repository will no longer be updated.
-```
-# Wavefront Jersey SDK [![build status][ci-img]][ci] [![Released Version][maven-img]][maven]
+> **Warning**
+>
+> VMware has ended active development of this project. this repository will no longer be updated.
+
+
+# Wavefront Jersey SDK [![Released Version][maven-img]][maven]
 
 The Wavefront for VMware Jersey SDK for Java is a library that collects out-of-the-box metrics, histograms and (optionally) traces from your Jersey-based microservices application, and reports the data to Wavefront. You can analyze the data in [Wavefront](https://www.wavefront.com) to better understand how your application is performing in production.
 
